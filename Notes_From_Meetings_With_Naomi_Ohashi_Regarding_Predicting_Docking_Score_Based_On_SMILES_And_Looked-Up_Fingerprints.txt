@@ -1,0 +1,7 @@
+10/11/2023
+
+What is our dataset of SMILES and docking scores?
+
+We take a SMILES and a fingerprint. Fingerprints will be derived from SMILES using RDKit and/or Morgan. There is one SMILES for each compound. There is one compound for each SMILES. There is one fingerprint for each compound. There is one compound for each fingerprint. From SMILES and fingerprints, how do we derive likelihood and prior probability distributions? From posterior probability distributions, how do we derive docking scores? How do other given columns become parameters of likelihood and prior probability distributions?
+
+What kind of Bayesian model do we want to use?
