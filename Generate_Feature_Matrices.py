@@ -13,35 +13,21 @@ def convert_to_list_of_numbers_of_occurrences_of_substructures(molecule):
 from rdkit.Chem import Draw
 
 def depict(molecule):
-    image = Draw.MolToImage(ethylenediaminetetraacetic_acid_or_edetic_acid_or_EDTA)
+    image = Draw.MolToImage(molecule)
     image.show()
 
 from rdkit.Chem import Descriptors
 
 # https://www.rdkit.org/docs/GettingStartedInPython.html#list-of-available-descriptors
-def calculate_array_of_values_of_descriptors(molecule):
-    list_of_names_of_descriptors = [
-        'MolWt',
-        'MaxPartialCharge',
-        'MinPartialCharge',
-        'MaxAbsPartialCharge',
-        'MinAbsPartialCharge',
-        'LabuteASA',
-        'FractionCSP3',
-        'TPSA',
-        'HeavyAtomCount',
-        'NumHAcceptors',
-        'NumHDonors',
-        'MolLogP',
-        'MolMR'
-    ]
+def calculate_list_of_values_of_descriptors(list_of_names_of_descriptors, molecule):
     dictionary_of_names_of_descriptors_and_values_of_descriptors = Descriptors.CalcMolDescriptors(molecule)
     number_of_descriptors = len(list_of_names_of_descriptors)
     array_of_values_of_descriptors = np.zeros(number_of_descriptors)
     for i in range(0, number_of_descriptors):
         name_of_descriptor = list_of_names_of_descriptors[i]
         array_of_values_of_descriptors[i] = dictionary_of_names_of_descriptors_and_values_of_descriptors[name_of_descriptor]
-    return array_of_values_of_descriptors
+    list_of_values_of_descriptors = array_of_values_of_descriptors.tolist()
+    return list_of_values_of_descriptors
 
 from rdkit import Chem
 import pandas as pd
@@ -62,7 +48,38 @@ def generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_subs
     data_frame_of_docking_scores_and_numbers_of_occurrences_of_substructures = pd.DataFrame(list_of_lists_of_docking_score_and_numbers_of_occurrences_of_substructures, columns = list_of_columns)
     return data_frame_of_docking_scores_and_numbers_of_occurrences_of_substructures
 
+def generate_feature_matrix_of_docking_scores_and_values_of_descriptors():
+    list_of_names_of_descriptors = [
+        'MolWt',
+        'MaxPartialCharge',
+        'MinPartialCharge',
+        'MaxAbsPartialCharge',
+        'MinAbsPartialCharge',
+        'LabuteASA',
+        'FractionCSP3',
+        'TPSA',
+        'HeavyAtomCount',
+        'NumHAcceptors',
+        'NumHDonors',
+        'MolLogP',
+        'MolMR'
+    ]
+    list_of_columns = ['Docking_Score'] + list_of_names_of_descriptors
+    data_frame_of_docking_scores_and_SMILESs = pd.read_csv(filepath_or_buffer = 'Data_Frame_Of_Docking_Scores_And_SMILESs.csv')
+    list_of_lists_of_docking_score_and_values_of_descriptors = []
+    for i in range(0, 3):
+        docking_score = data_frame_of_docking_scores_and_SMILESs.at[i, "docking score"]
+        SMILES = data_frame_of_docking_scores_and_SMILESs.at[i, "SMILES"]
+        molecule = Chem.MolFromSmiles(SMILES)
+        list_of_values_of_descriptors = calculate_list_of_values_of_descriptors(list_of_names_of_descriptors, molecule)
+        list_of_docking_score_and_values_of_descriptors = [docking_score] + list_of_values_of_descriptors
+        list_of_lists_of_docking_score_and_values_of_descriptors.append(list_of_docking_score_and_values_of_descriptors)
+    data_frame_of_docking_scores_and_values_of_descriptors = pd.DataFrame(list_of_lists_of_docking_score_and_values_of_descriptors, columns = list_of_columns)
+    return data_frame_of_docking_scores_and_values_of_descriptors
+
 if __name__ == "__main__":
-        feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures = generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures()
-        print(feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures)
-        feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures.to_csv('Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv', index = False)
+        #feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures = generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures()
+        #print(feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures)
+        #feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures.to_csv('Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv', index = False)
+        feature_matrix_of_docking_scores_and_values_of_descriptors = generate_feature_matrix_of_docking_scores_and_values_of_descriptors()
+        print(feature_matrix_of_docking_scores_and_values_of_descriptors)
