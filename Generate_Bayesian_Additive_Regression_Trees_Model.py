@@ -4,6 +4,24 @@ from matplotlib import pyplot as plt
 import pymc
 import pymc_bart
 
+'''
+Markov Chain Monte Carlo (MCMC) simulation allows us to look at a histogram that approximates distributions instead of looking at numeric distributions.
+To learn about MCMC simulation, read Statistical Rethinking by Richard McElreath.
+There is one prior probability density distribution for each parameter.
+PyMC3 allows approximating posterior probability density distributions.
+
+We can compare models using coefficient of determination R2, Mean Absolute Error, and Mean Squared Error.
+We can compare classifiers of whether a docking score is in the lowest 10 percent of docking scores.
+We can use Enrichment Scores and Enrichment Analysis.
+See https://gist.github.com/ravila4/26b6ceb21c7e87af80be01f4620a7a58.
+actives_list is a list of indicators of whether a docking score is in the lowest 10 percent of docking scores.
+scores_list is a list of predicted docking scores.
+We can use Gains Curves, which are derivatives of ROC curves.
+We can use graphs of Enrichment Factor vs. Percentage.
+In a graph of Enrichment Factor vs. Percentage, we choose a model with a higher, more left, broader hill.
+Enrichment factor is the ratio of the value of an ROC-like curve to the value of a diagonal line like curve.
+'''
+
 def main():
 
     RANDOM_SEED = 5781

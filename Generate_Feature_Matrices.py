@@ -1,6 +1,15 @@
 import numpy as np
 from rdkit.Chem import AllChem
 
+'''
+A list of numbers of occurrences of substructures is a numeric representation of a chemical structure.
+Similar chemical structures have some similar lists of numbers of occurrences of substructures.
+These lists have been folded onto themselves so that each list has 1,024 numbers.
+When we add a number of occurrences of a substructure, we move in a particular direction in the space spanned by aggregated numbers of occurrences of substructures.
+With these lists we can build a feature matrix where each row is a list.
+With a feature matrix we can build a model of docking score vs. list.
+'''
+
 # https://stackoverflow.com/a/55119975
 def convert_to_list_of_numbers_of_occurrences_of_substructures(molecule):
     fingerprint = AllChem.GetHashedMorganFingerprint(mol = molecule, radius = 2, nBits = 1024)
@@ -49,21 +58,35 @@ def generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_subs
     return data_frame_of_docking_scores_and_numbers_of_occurrences_of_substructures
 
 def generate_feature_matrix_of_docking_scores_and_values_of_descriptors():
+    '''
+    Shape is determined by MoltWt, LabuteASA, FractionCSP3, and HeavyAtomCount
+    Lipophilicity is determined by MolLogP
+    Polarity is determined by MaxPartialCharge, MinPartialCharge, MaxAbsPartialCharge, MinAbsPartialCharge, TPSA, and MolMR
+    Propensity to form hydrogen bonds is determined by NumHAcceptors and NumHDonors
+    '''
     list_of_names_of_descriptors = [
-        'MolWt',
-        'MaxPartialCharge',
+        'MolWt', # Molecular weight
+        'MaxPartialCharge', # Measure of polarity, solubility, or electronegativity. For example, maximum of partial charge of Carbon in Carbon Dioxide or maximum partial charge of Oxygen in Carbon Dioxide.
         'MinPartialCharge',
-        'MaxAbsPartialCharge',
+        'MaxAbsPartialCharge', # Maximum of absolute value of partial charge
         'MinAbsPartialCharge',
-        'LabuteASA',
-        'FractionCSP3',
-        'TPSA',
-        'HeavyAtomCount',
-        'NumHAcceptors',
-        'NumHDonors',
-        'MolLogP',
-        'MolMR'
+        'LabuteASA', # Approximation of surface area of molecule. Measure of degree to which molecule is not flat.
+        'FractionCSP3', # Fraction of carbon atoms in molecule with four neighbors. Fraction of substructures that are tetrahedral.
+        'TPSA', # Measure of polar surface area. Measure of surface area on which molecule has charge. For example, surface area of Oxygen.
+        'HeavyAtomCount', # Number of heavy atoms (i.e., atoms that are not Hydrogen). Measure of size of molecule.
+        'NumHAcceptors', # Measure of propensity that molecule will form hydrogen bonds by accepting electrons.
+        'NumHDonors', # Measure of propensity that molecule will form hydrogen bonds by donating electrons.
+        'MolLogP', # Measure of hydrophilicity or lipophilicity. Lower values indicate greater hydrophilicity.
+        'MolMR' # Measure of extend to which molecule polarizes in the presence of an electric field.
     ]
+    '''
+    Consider adding descriptor NumRotatable bonds, a measure of flexibility of molecule.
+    Consider adding Num{Aromatic,Saturated,Aliphatic}Rings, number of rings.
+    REOE_VSA1... through VSA_EState1... are an alternate family of measurements of partial charge.
+    Topliss fragments are vectors of numbers of occurrences of specific substructures called fragments
+    and may serve as alternate rows in feature matrix of docking scores and numbers of occurrences of substructures.
+    Consider adding 3D descriptors.
+    '''
     list_of_columns = ['Docking_Score'] + list_of_names_of_descriptors
     data_frame_of_docking_scores_and_SMILESs = pd.read_csv(filepath_or_buffer = 'Data_Frame_Of_Docking_Scores_And_SMILESs.csv')
     list_of_lists_of_docking_score_and_values_of_descriptors = []
