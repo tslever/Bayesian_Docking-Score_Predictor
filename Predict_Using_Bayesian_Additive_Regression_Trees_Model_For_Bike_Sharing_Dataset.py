@@ -61,8 +61,8 @@ def main():
         array_of_predicted_response_values_4_chains_by_1000_samples_by_100_observations = pymc.sample_posterior_predictive(inference_data_with_groups_posterior_sample_stats_and_observed_data)
 
     array_of_averaged_predicted_response_values_100_observations_long = array_of_predicted_response_values_4_chains_by_1000_samples_by_100_observations.posterior_predictive['tensor_variable_representing_pymc_Negative_Binomial_model_and_predictions'].mean(axis = (0, 1))
-    observed_response_values = array_of_predicted_response_values_4_chains_by_1000_samples_by_100_observations.observed_data['tensor_variable_representing_pymc_Negative_Binomial_model_and_predictions']
-
+    observed_response_values = bike_sharing_dataset.tail(n = 100)[['cnt']]
+    
     fig = plt.figure(figsize = (12, 12))
     ax = fig.add_subplot(projection = '3d')
     ax.scatter(X[:, 0], X[:, 1], array_of_averaged_predicted_response_values_100_observations_long, color = 'blue')
