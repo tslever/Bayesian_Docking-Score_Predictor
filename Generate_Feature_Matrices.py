@@ -106,3 +106,4 @@ if __name__ == "__main__":
         #feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures.to_csv('Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv', index = False)
         feature_matrix_of_docking_scores_and_values_of_descriptors = generate_feature_matrix_of_docking_scores_and_values_of_descriptors()
         print(feature_matrix_of_docking_scores_and_values_of_descriptors)
+        feature_matrix_of_docking_scores_and_values_of_descriptors.to_csv('Feature_Matrix_Of_Docking_Scores_And_Values_Of_Descriptors.csv', index = False)
