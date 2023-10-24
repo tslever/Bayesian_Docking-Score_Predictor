@@ -90,7 +90,7 @@ def generate_feature_matrix_of_docking_scores_and_values_of_descriptors():
     list_of_columns = ['Docking_Score'] + list_of_names_of_descriptors
     data_frame_of_docking_scores_and_SMILESs = pd.read_csv(filepath_or_buffer = 'Data_Frame_Of_Docking_Scores_And_SMILESs.csv')
     list_of_lists_of_docking_score_and_values_of_descriptors = []
-    for i in range(0, 3):
+    for i in range(0, 200):
         docking_score = data_frame_of_docking_scores_and_SMILESs.at[i, "docking score"]
         SMILES = data_frame_of_docking_scores_and_SMILESs.at[i, "SMILES"]
         molecule = Chem.MolFromSmiles(SMILES)
