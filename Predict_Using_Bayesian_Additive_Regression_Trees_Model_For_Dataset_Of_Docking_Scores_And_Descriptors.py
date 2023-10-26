@@ -31,6 +31,7 @@ def main():
         tensor_variable_representing_prior_probability_density_distribution_for_parameter_and_standard_deviation_sigma = pymc.HalfNormal("sigma", sigma = 1)
         MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
         tensor_variable_representing_expected_value_mu_of_outcomes = pymc_bart.BART(name = 'mu', X = MutableData_of_values_of_predictors, Y = one_dimensional_array_of_values_of_response_for_training, m = 50)
+        # pymc.Normal in this context provides uncertainty about the error associated with the prediction by BART, and turns the prediction into a probability density distribution.
         tensor_variable_representing_likelihood_and_sampling_probability_density_distribution_of_outcomes = pymc.Normal('L(outcome | mu, sigma)', mu = tensor_variable_representing_expected_value_mu_of_outcomes, sigma = tensor_variable_representing_prior_probability_density_distribution_for_parameter_and_standard_deviation_sigma, observed = one_dimensional_array_of_values_of_response_for_training)
         inference_data_with_samples_from_posterior_statistics_of_sampling_run_and_copy_of_observed_data = pymc.sample(random_seed = random_seed)
 
