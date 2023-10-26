@@ -51,12 +51,19 @@ def main():
         array_of_predicted_docking_scores_4_chains_by_1000_samples_by_100_observations = pymc.sample_posterior_predictive(inference_data_with_samples_from_posterior_statistics_of_sampling_run_and_copy_of_observed_data)
 
     array_of_averaged_predicted_docking_scores_100_observations_long = array_of_predicted_docking_scores_4_chains_by_1000_samples_by_100_observations.posterior_predictive['L(outcome | mu, sigma)'].mean(axis = (0, 1))
-    observed_docking_scores = one_dimensional_array_of_values_of_response_for_testing
+
+    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals = pd.DataFrame(
+        {
+            'observed_docking_scores': one_dimensional_array_of_values_of_response_for_testing,
+            'averaged_docking_scores': array_of_averaged_predicted_docking_scores_100_observations_long
+        }
+    )
+    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals.to_csv(path_or_buf = 'Data_Frame_Of_Observed_And_Averaged_Predicted_Docking_Scores_Predicted_By_Bayesian_Linear_Regression_Model.csv')
 
     fig = plt.figure(figsize = (12, 12))
     ax = fig.add_subplot(projection = '3d')
     ax.scatter(two_dimensional_array_of_values_of_predictors_for_training[:, 0], two_dimensional_array_of_values_of_predictors_for_training[:, 1], array_of_averaged_predicted_docking_scores_100_observations_long, color = 'blue')
-    ax.scatter(two_dimensional_array_of_values_of_predictors_for_testing[:, 0], two_dimensional_array_of_values_of_predictors_for_testing[:, 1], observed_docking_scores, color = 'red')
+    ax.scatter(two_dimensional_array_of_values_of_predictors_for_testing[:, 0], two_dimensional_array_of_values_of_predictors_for_testing[:, 1], one_dimensional_array_of_values_of_response_for_testing, color = 'red')
     plt.show()
 
 if __name__ == '__main__':
