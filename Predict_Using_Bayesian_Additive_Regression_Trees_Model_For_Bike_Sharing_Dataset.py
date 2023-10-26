@@ -60,13 +60,23 @@ def main():
         pymc.set_data({'MutableData_containing_X': test_data})
         array_of_predicted_response_values_4_chains_by_1000_samples_by_100_observations = pymc.sample_posterior_predictive(inference_data_with_groups_posterior_sample_stats_and_observed_data)
 
-    array_of_averaged_predicted_response_values_100_observations_long = array_of_predicted_response_values_4_chains_by_1000_samples_by_100_observations.posterior_predictive['tensor_variable_representing_pymc_Negative_Binomial_model_and_predictions'].mean(axis = (0, 1))
-    observed_response_values = bike_sharing_dataset.tail(n = 100)[['cnt']]
+    data_frame_of_observed_response_values = bike_sharing_dataset.tail(n = 100)[['cnt']]
+    DataArray_of_averaged_predicted_response_values = array_of_predicted_response_values_4_chains_by_1000_samples_by_100_observations.posterior_predictive['tensor_variable_representing_pymc_Negative_Binomial_model_and_predictions'].mean(axis = (0, 1))
+    one_dimensional_array_of_observed_response_values = data_frame_of_observed_response_values.values.reshape(-1)
+    one_dimensional_array_of_averaged_predicted_response_values = DataArray_of_averaged_predicted_response_values.to_numpy().reshape(-1)
     
+    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals = pd.DataFrame(
+        {
+            'observed_bike_rentals': one_dimensional_array_of_observed_response_values,
+            'averaged_predicted_bike_rentals': one_dimensional_array_of_averaged_predicted_response_values
+        }
+    )
+    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals.to_csv(path_or_buf = 'Data_Frame_Of_Observed_And_Averaged_Predicted_Numbers_Of_Bike_Rentals.csv')
+
     fig = plt.figure(figsize = (12, 12))
     ax = fig.add_subplot(projection = '3d')
-    ax.scatter(X[:, 0], X[:, 1], array_of_averaged_predicted_response_values_100_observations_long, color = 'blue')
-    ax.scatter(X[:, 0], X[:, 1], observed_response_values, color = 'red')
+    ax.scatter(X[:, 0], X[:, 1], one_dimensional_array_of_averaged_predicted_response_values, color = 'blue')
+    ax.scatter(X[:, 0], X[:, 1], one_dimensional_array_of_observed_response_values, color = 'red')
     plt.show()
 
 if __name__ == '__main__':
