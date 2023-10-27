@@ -1,0 +1,10 @@
+from matplotlib import pyplot as plt
+import pandas as pd
+
+data_frame_of_observed_and_averaged_predicted_docking_scores_and_indicators_that_observation_belongs_to_lowest_10_percent = pd.read_csv('Data_Frame_Of_Observed_And_Averaged_Predicted_Docking_Scores_And_Indicators_That_Observation_Belongs_To_Lowest_10_Percent.csv')
+plt.scatter(
+    x = data_frame_of_observed_and_averaged_predicted_docking_scores_and_indicators_that_observation_belongs_to_lowest_10_percent['observed_docking_score'],
+    y = data_frame_of_observed_and_averaged_predicted_docking_scores_and_indicators_that_observation_belongs_to_lowest_10_percent['averaged_predicted_docking_score'],
+    alpha = 0.1
+)
+plt.show()
