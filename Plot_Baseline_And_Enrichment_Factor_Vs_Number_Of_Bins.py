@@ -7,7 +7,7 @@ data_frame_of_observed_and_averaged_predicted_docking_scores_and_indicators_that
 column_belongs_to_lowest_10_percent = data_frame_of_observed_and_averaged_predicted_docking_scores_and_indicators_that_observation_belongs_to_lowest_10_percent['belongs_to_lowest_10_percent']
 number_of_docking_scores_in_lowest_10_percent = sum(column_belongs_to_lowest_10_percent)
 number_of_docking_scores = data_frame_of_observed_and_averaged_predicted_docking_scores_and_indicators_that_observation_belongs_to_lowest_10_percent.shape[0]
-number_of_bins = 50
+number_of_bins = 10
 number_of_docking_scores_per_bin = number_of_docking_scores // number_of_bins
 list_of_indices_of_bins = [i for i in range(0, number_of_bins)]
 list_of_baselines = []
