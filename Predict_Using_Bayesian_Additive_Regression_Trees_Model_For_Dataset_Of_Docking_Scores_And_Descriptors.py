@@ -47,13 +47,16 @@ def main():
 
     array_of_averaged_predicted_docking_scores_100_observations_long = array_of_predicted_docking_scores_4_chains_by_1000_samples_by_100_observations.posterior_predictive['L(outcome | mu, sigma)'].mean(axis = (0, 1))
 
-    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals = pd.DataFrame(
+    data_frame_of_observed_and_averaged_predicted_docking_scores_and_indicators_that_observation_belongs_to_lowest_10_percent = pd.DataFrame(
         {
-            'observed_docking_scores': one_dimensional_array_of_values_of_response_for_testing,
-            'averaged_docking_scores': array_of_averaged_predicted_docking_scores_100_observations_long
+            'observed_docking_score': one_dimensional_array_of_values_of_response_for_testing,
+            'averaged_predicted_docking_score': array_of_averaged_predicted_docking_scores_100_observations_long
         }
     )
-    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals.to_csv(path_or_buf = 'Data_Frame_Of_Observed_And_Averaged_Predicted_Docking_Scores_Predicted_By_Bayesian_Model_With_BART_Model.csv', index = False)
+    tenth_percentile = np.percentile(one_dimensional_array_of_values_of_response_for_testing, 10)
+    list_of_indicators_that_observation_belongs_to_lowest_10_percent = [1 if observed_docking_score < tenth_percentile else 0 for observed_docking_score in one_dimensional_array_of_values_of_response_for_testing]
+    data_frame_of_observed_and_averaged_predicted_docking_scores_and_indicators_that_observation_belongs_to_lowest_10_percent['belongs_to_lowest_10_percent'] = list_of_indicators_that_observation_belongs_to_lowest_10_percent
+    data_frame_of_observed_and_averaged_predicted_docking_scores_and_indicators_that_observation_belongs_to_lowest_10_percent.to_csv('Data_Frame_Of_Observed_And_Averaged_Predicted_Docking_Scores_And_Indicators_That_Observation_Belongs_To_Lowest_10_Percent.csv', index = False)
 
     fig = plt.figure(figsize = (12, 12))
     ax = fig.add_subplot(projection = '3d')
