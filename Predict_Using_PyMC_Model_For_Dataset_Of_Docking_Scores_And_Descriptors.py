@@ -32,12 +32,12 @@ def main():
     with pymc.Model() as pymc_model:
         MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
         tensor_variable_representing_prior_probability_density_distribution_for_constant_term = pymc.Normal('P(constant term)', mu = 0, sigma = 10)
-        tensor_variable_representing_prior_probability_density_distribution_for_vector_of_coefficients = pymc.Normal('P(vector of coefficients)', mu = 0, sigma = 10, shape = 2)
+        number_of_predictors = two_dimensional_array_of_values_of_predictors_for_training.shape[1]
+        tensor_variable_representing_prior_probability_density_distribution_for_vector_of_coefficients = pymc.Normal('P(vector_of_coefficients)', mu = 0, sigma = 10, shape = number_of_predictors)
         tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation = pymc.HalfNormal('P(standard deviation)', sigma = 1)
         tensor_variable_representing_expected_value_mu_of_docking_scores = (
             tensor_variable_representing_prior_probability_density_distribution_for_constant_term
-            + tensor_variable_representing_prior_probability_density_distribution_for_vector_of_coefficients[0] * MutableData_of_values_of_predictors[:, 0]
-            + tensor_variable_representing_prior_probability_density_distribution_for_vector_of_coefficients[1] * MutableData_of_values_of_predictors[:, 1]
+            + pymc.math.dot(two_dimensional_array_of_values_of_predictors_for_training, tensor_variable_representing_prior_probability_density_distribution_for_vector_of_coefficients)
         )
         tensor_variable_representing_likelihood_and_sampling_probability_density_distribution_of_docking_scores = pymc.Normal(
             'P(docking score | mu, sigma)',
