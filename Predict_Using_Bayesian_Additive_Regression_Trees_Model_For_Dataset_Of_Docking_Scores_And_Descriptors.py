@@ -53,7 +53,7 @@ def main():
             'averaged_docking_scores': array_of_averaged_predicted_docking_scores_100_observations_long
         }
     )
-    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals.to_csv(path_or_buf = 'Data_Frame_Of_Observed_And_Averaged_Predicted_Docking_Scores_Predicted_By_Bayesian_Model_With_BART_Model.csv')
+    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals.to_csv(path_or_buf = 'Data_Frame_Of_Observed_And_Averaged_Predicted_Docking_Scores_Predicted_By_Bayesian_Model_With_BART_Model.csv', index = False)
 
     fig = plt.figure(figsize = (12, 12))
     ax = fig.add_subplot(projection = '3d')
