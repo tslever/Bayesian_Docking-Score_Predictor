@@ -65,13 +65,16 @@ def main():
     one_dimensional_array_of_observed_response_values = data_frame_of_observed_response_values.values.reshape(-1)
     one_dimensional_array_of_averaged_predicted_response_values = DataArray_of_averaged_predicted_response_values.to_numpy().reshape(-1)
     
-    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals = pd.DataFrame(
+    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals_and_indicators_that_observation_belongs_to_highest_10_percent = pd.DataFrame(
         {
             'observed_bike_rentals': one_dimensional_array_of_observed_response_values,
             'averaged_predicted_bike_rentals': one_dimensional_array_of_averaged_predicted_response_values
         }
     )
-    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals.to_csv(path_or_buf = 'Data_Frame_Of_Observed_And_Averaged_Predicted_Numbers_Of_Bike_Rentals.csv')
+    ninetieth_percentile = np.percentile(one_dimensional_array_of_observed_response_values, 90)
+    list_of_indicators_that_observation_belongs_to_highest_10_percent = [1 if observed_number_of_bike_rentals > ninetieth_percentile else 0 for observed_number_of_bike_rentals in one_dimensional_array_of_observed_response_values]
+    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals_and_indicators_that_observation_belongs_to_highest_10_percent['belongs_to_highest_10_percent'] = list_of_indicators_that_observation_belongs_to_highest_10_percent
+    data_frame_of_observed_and_averaged_predicted_numbers_of_bike_rentals_and_indicators_that_observation_belongs_to_highest_10_percent.to_csv('Data_Frame_Of_Observed_And_Averaged_Predicted_Numbers_Of_Bike_Rentals_And_Indicators_That_Observation_Belongs_To_Highest_10_Percent.csv', index = False)
 
     fig = plt.figure(figsize = (12, 12))
     ax = fig.add_subplot(projection = '3d')
