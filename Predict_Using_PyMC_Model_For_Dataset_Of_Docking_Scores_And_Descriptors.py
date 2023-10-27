@@ -28,6 +28,7 @@ def main():
     random_seed = 0
     np.random.seed(random_seed)
 
+    '''
     with pymc.Model() as pymc_model:
         MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
         tensor_variable_representing_prior_probability_density_distribution_for_constant_term = pymc.Normal('P(constant term)', mu = 0, sigma = 10)
@@ -45,8 +46,8 @@ def main():
             observed = one_dimensional_array_of_docking_scores_for_training
         )
         inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data = pymc.sample(draws = 5000, random_seed = random_seed)
-
     '''
+
     with pymc.Model() as pymc_model:
         tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation = pymc.HalfNormal('P(sigma)', sigma = 100)
         MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
@@ -63,7 +64,6 @@ def main():
             observed = one_dimensional_array_of_docking_scores_for_training
         )
         inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data = pymc.sample(draws = 5000, random_seed = random_seed)
-    '''
 
     with pymc_model:
         pymc.set_data({'MutableData_of_values_of_predictors': two_dimensional_array_of_values_of_predictors_for_testing})
