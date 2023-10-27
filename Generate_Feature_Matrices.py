@@ -1,4 +1,5 @@
 import numpy as np
+import random
 from rdkit.Chem import AllChem
 
 '''
@@ -90,9 +91,14 @@ def generate_feature_matrix_of_docking_scores_and_values_of_descriptors():
     list_of_columns = ['Docking_Score'] + list_of_names_of_descriptors
     data_frame_of_docking_scores_and_SMILESs = pd.read_csv(filepath_or_buffer = 'Data_Frame_Of_Docking_Scores_And_SMILESs.csv')
     list_of_lists_of_docking_score_and_values_of_descriptors = []
-    for i in range(0, 10_000):
-        docking_score = data_frame_of_docking_scores_and_SMILESs.at[i, "docking score"]
-        SMILES = data_frame_of_docking_scores_and_SMILESs.at[i, "SMILES"]
+    range_of_first_10000_whole_numbers = range(0, 10_000)
+    list_of_random_indices = [random.randint(0, 2_121_227) for _ in range_of_first_10000_whole_numbers]
+    for i in range_of_first_10000_whole_numbers:
+        if i % 100 == 0:
+            print('Generating list of docking score and values of descriptors ' + str(i))
+        random_index = list_of_random_indices[i]
+        docking_score = data_frame_of_docking_scores_and_SMILESs.at[random_index, "docking score"]
+        SMILES = data_frame_of_docking_scores_and_SMILESs.at[random_index, "SMILES"]
         molecule = Chem.MolFromSmiles(SMILES)
         list_of_values_of_descriptors = calculate_list_of_values_of_descriptors(list_of_names_of_descriptors, molecule)
         list_of_docking_score_and_values_of_descriptors = [docking_score] + list_of_values_of_descriptors
