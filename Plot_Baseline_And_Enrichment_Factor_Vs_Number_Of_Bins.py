@@ -6,9 +6,9 @@ import seaborn as sns
 data_frame = pd.read_csv('Data_Frame_Of_Observed_And_Averaged_Predicted_Docking_Scores_And_Indicators_That_Observation_Belongs_To_Lowest_10_Percent.csv')
 number_of_numbers_of_bike_rentals_in_lowest_10_percent = sum(data_frame['belongs_to_lowest_10_percent'])
 number_of_numbers_of_bike_rentals = data_frame.shape[0]
-number_of_bins = 10
+number_of_bins = 50
 number_of_numbers_of_bike_rentals_per_bin = number_of_numbers_of_bike_rentals // number_of_bins
-list_of_indices_of_bins = [i for i in range(0, 10)]
+list_of_indices_of_bins = [i for i in range(0, number_of_bins)]
 list_of_baselines = []
 for i in list_of_indices_of_bins:
     lower_index_of_bin = number_of_numbers_of_bike_rentals_per_bin * i
@@ -19,10 +19,9 @@ for i in list_of_indices_of_bins:
     enrichment_factor = (number_of_numbers_of_bike_rentals_in_bin_in_lowest_10_percent / number_of_numbers_of_bike_rentals_in_lowest_10_percent) / (number_of_numbers_of_bike_rentals_in_bin / number_of_numbers_of_bike_rentals)
     list_of_baselines.append(enrichment_factor)
 
-data_frame = data_frame.sort_values(by = 'averaged_predicted_docking_score', ascending = False)
+data_frame = data_frame.sort_values(by = 'averaged_predicted_docking_score', ascending = True)
 number_of_numbers_of_bike_rentals_in_lowest_10_percent = sum(data_frame['belongs_to_lowest_10_percent'])
 number_of_numbers_of_bike_rentals = data_frame.shape[0]
-number_of_bins = 10
 number_of_numbers_of_bike_rentals_per_bin = number_of_numbers_of_bike_rentals // number_of_bins
 list_of_enrichment_factors = []
 for i in list_of_indices_of_bins:
@@ -37,7 +36,7 @@ for i in list_of_indices_of_bins:
 data_frame = pd.DataFrame({
     'index of bin': list_of_indices_of_bins + list_of_indices_of_bins,
     'value of baseline or enrichment factor': list_of_baselines + list_of_enrichment_factors,
-    'specification of baseline or enrichment factor': ['baseline' for i in range(0, 10)] + ['enrichment factor' for i in range(0, 10)]
+    'specification of baseline or enrichment factor': ['baseline' for i in range(0, number_of_bins)] + ['enrichment factor' for i in range(0, number_of_bins)]
 })
 sns.barplot(x = 'index of bin', y = 'value of baseline or enrichment factor', hue = 'specification of baseline or enrichment factor', data = data_frame)
 plt.title('Value Of Baseline Or Enrichment Factor Vs. Index Of Bin')
