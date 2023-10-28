@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import pymc
 import pymc_bart
+from sklearn.linear_model import LinearRegression
 
 def main():
 
@@ -37,6 +38,12 @@ def main():
     two_dimensional_array_of_values_of_predictors_for_testing = data_frame_of_values_of_predictors.tail(n = number_of_testing_observations).values
     one_dimensional_array_of_docking_scores_for_training = data_frame_of_docking_scores.head(n = number_of_training_observations).values.reshape(-1)
     one_dimensional_array_of_docking_scores_for_testing = data_frame_of_docking_scores.tail(n = number_of_testing_observations).values.reshape(-1)
+
+    '''
+    linear_regression_model = LinearRegression()
+    linear_regression_model.fit(two_dimensional_array_of_values_of_predictors_for_training, one_dimensional_array_of_docking_scores_for_training)
+    array_of_averaged_predicted_docking_scores_number_of_testing_observations_long = linear_regression_model.predict(two_dimensional_array_of_values_of_predictors_for_testing)
+    '''
 
     '''
     with pymc.Model() as pymc_model:
@@ -77,7 +84,7 @@ def main():
         )
         inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data = pymc.sample(random_seed = random_seed)
     '''
-        
+
     with pymc.Model() as pymc_model:
         tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation = pymc.HalfNormal('P(sigma)', sigma = 100)
         MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
@@ -99,8 +106,8 @@ def main():
     with pymc_model:
         pymc.set_data({'MutableData_of_values_of_predictors': two_dimensional_array_of_values_of_predictors_for_testing})
         array_of_predicted_docking_scores_4_chains_by_number_of_draws_by_number_of_testing_observations = pymc.sample_posterior_predictive(inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data)
-
     array_of_averaged_predicted_docking_scores_number_of_testing_observations_long = array_of_predicted_docking_scores_4_chains_by_number_of_draws_by_number_of_testing_observations.posterior_predictive['P(docking score | mu, sigma)'].mean(axis = (0, 1))
+
     tenth_percentile = np.percentile(one_dimensional_array_of_docking_scores_for_testing, 10)
     list_of_indicators_that_observation_belongs_to_lowest_10_percent = [1 if observed_docking_score < tenth_percentile else 0 for observed_docking_score in one_dimensional_array_of_docking_scores_for_testing]
     data_frame_of_observed_and_averaged_predicted_docking_scores_and_indicators_that_observation_belongs_to_lowest_10_percent = pd.DataFrame(
