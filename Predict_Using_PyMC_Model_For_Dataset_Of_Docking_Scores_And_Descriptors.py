@@ -63,7 +63,8 @@ def main():
             sigma = tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation,
             observed = one_dimensional_array_of_docking_scores_for_training
         )
-        inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data = pymc.sample(draws = 5000, random_seed = random_seed)
+        inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data = pymc.sample(draws = 10000, random_seed = random_seed)
+        inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data.to_netcdf('Inference_Data.netcdf4')
 
     with pymc_model:
         pymc.set_data({'MutableData_of_values_of_predictors': two_dimensional_array_of_values_of_predictors_for_testing})
