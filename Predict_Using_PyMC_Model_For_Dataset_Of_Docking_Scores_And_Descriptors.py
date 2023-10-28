@@ -9,8 +9,29 @@ import pymc_bart
 
 def main():
 
+    '''
+    random_seed = 0
+    np.random.seed(random_seed)
+
+    # True parameter values
+    alpha, sigma = 1, 1
+    beta = [1, 2.5]
+
+    # Size of dataset
+    size = 10_000
+
+    # Predictor variable
+    X1 = np.random.randn(size)
+    X2 = np.random.randn(size) * 0.2
+
+    # Simulate outcome variable
+    rng = np.random.default_rng(random_seed)
+    Y = alpha + beta[0] * X1 + beta[1] * X2 + rng.normal(size=size) * sigma
+    '''
+
     feature_matrix_of_docking_scores_and_values_of_descriptors = pd.read_csv(filepath_or_buffer = 'Feature_Matrix_Of_Docking_Scores_And_Values_Of_Descriptors.csv')
     data_frame_of_values_of_predictors = feature_matrix_of_docking_scores_and_values_of_descriptors[['LabuteASA', 'MolLogP', 'MaxAbsPartialCharge', 'NumHAcceptors', 'NumHDonors']]
+    #data_frame_of_values_of_predictors = pd.DataFrame({'X1': X1, 'X2': X2})
     number_of_training_observations = 5000
     number_of_testing_observations = 5000
     data_frame_of_values_of_predictors_for_training = data_frame_of_values_of_predictors.head(n = number_of_training_observations)
@@ -18,15 +39,13 @@ def main():
     data_frame_of_values_of_predictors_for_testing = data_frame_of_values_of_predictors.tail(n = number_of_testing_observations)
     two_dimensional_array_of_values_of_predictors_for_testing = data_frame_of_values_of_predictors_for_testing.values
     data_frame_of_docking_scores = feature_matrix_of_docking_scores_and_values_of_descriptors['Docking_Score']
+    #data_frame_of_docking_scores = pd.DataFrame({'Y': Y})
     data_frame_of_docking_scores_for_training = data_frame_of_docking_scores.head(n = number_of_training_observations)
     two_dimensional_array_of_docking_scores_for_training = data_frame_of_docking_scores_for_training.values
     one_dimensional_array_of_docking_scores_for_training = two_dimensional_array_of_docking_scores_for_training.reshape(-1)
     data_frame_of_docking_scores_for_testing = data_frame_of_docking_scores.tail(n = number_of_testing_observations)
     two_dimensional_array_of_docking_scores_for_testing = data_frame_of_docking_scores_for_testing.values
     one_dimensional_array_of_docking_scores_for_testing = two_dimensional_array_of_docking_scores_for_testing.reshape(-1)
-
-    random_seed = 0
-    np.random.seed(random_seed)
 
     '''
     with pymc.Model() as pymc_model:
@@ -63,7 +82,7 @@ def main():
             sigma = tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation,
             observed = one_dimensional_array_of_docking_scores_for_training
         )
-        inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data = pymc.sample(draws = 10000, random_seed = random_seed)
+        inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data = pymc.sample(random_seed = random_seed)
         inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data.to_netcdf('Inference_Data.netcdf4')
 
     with pymc_model:
