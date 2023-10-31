@@ -87,6 +87,8 @@ def main():
 
     with pymc.Model() as pymc_model:
         tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation = pymc.HalfNormal('P(sigma)', sigma = 100)
+        # The standard deviation of docking scores in Data_Frame_Of_Docking_Scores_And_SMILESs.csv is 1.4774124330368725.
+        # Using a normal prior probability distribution for standard deviation with the above standard deviation as mean and a third of that standard deviation as standard deviation less to a less perform Bayesian model.
         MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
         tensor_variable_representing_expected_value_mu_of_docking_scores = pymc_bart.BART(
             name = 'mu',
