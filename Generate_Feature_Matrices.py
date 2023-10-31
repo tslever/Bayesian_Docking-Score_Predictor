@@ -91,8 +91,8 @@ def generate_feature_matrix_of_docking_scores_and_values_of_descriptors():
     list_of_columns = ['Docking_Score'] + list_of_names_of_descriptors
     data_frame_of_docking_scores_and_SMILESs = pd.read_csv(filepath_or_buffer = 'Data_Frame_Of_Docking_Scores_And_SMILESs.csv')
     list_of_lists_of_docking_score_and_values_of_descriptors = []
-    array_of_first_whole_numbers = np.arange(0, 2_121_227)
-    array_of_random_indices = np.arange(0, 2_121_227)
+    array_of_first_whole_numbers = np.arange(0, data_frame_of_docking_scores_and_SMILESs.shape[0])
+    array_of_random_indices = np.arange(0, data_frame_of_docking_scores_and_SMILESs.shape[0])
     np.random.shuffle(array_of_random_indices)
     for i in array_of_first_whole_numbers:
         if i % 1000 == 0:
