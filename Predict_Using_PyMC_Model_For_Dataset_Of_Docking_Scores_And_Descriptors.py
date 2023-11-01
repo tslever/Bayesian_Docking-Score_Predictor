@@ -3,6 +3,7 @@ We use a PYMC model to predict docking scores based on test data not used for tr
 '''
 
 import arviz
+from ISLP.bart.bart import BART
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
@@ -37,8 +38,10 @@ def main():
 
     number_of_training_observations = 5000 # 1_060_613
     number_of_testing_observations = 5000 # 1_060_613
-    two_dimensional_array_of_values_of_predictors_for_training = data_frame_of_values_of_predictors.head(n = number_of_training_observations).values
-    two_dimensional_array_of_values_of_predictors_for_testing = data_frame_of_values_of_predictors.tail(n = number_of_testing_observations).values
+    data_frame_of_values_of_predictors_for_training = data_frame_of_values_of_predictors.head(n = number_of_training_observations)
+    data_frame_of_values_of_predictors_for_testing = data_frame_of_values_of_predictors.tail(n = number_of_testing_observations)
+    two_dimensional_array_of_values_of_predictors_for_training = data_frame_of_values_of_predictors_for_training.values
+    two_dimensional_array_of_values_of_predictors_for_testing = data_frame_of_values_of_predictors_for_testing.values
     one_dimensional_array_of_docking_scores_for_training = data_frame_of_docking_scores.head(n = number_of_training_observations).values.reshape(-1)
     one_dimensional_array_of_docking_scores_for_testing = data_frame_of_docking_scores.tail(n = number_of_testing_observations).values.reshape(-1)
 
@@ -47,6 +50,10 @@ def main():
     linear_regression_model.fit(two_dimensional_array_of_values_of_predictors_for_training, one_dimensional_array_of_docking_scores_for_training)
     array_of_averaged_predicted_docking_scores_number_of_testing_observations_long = linear_regression_model.predict(two_dimensional_array_of_values_of_predictors_for_testing)
     '''
+
+    BART_model = BART(random_state = random_seed)
+    BART_model.fit(data_frame_of_values_of_predictors_for_training, data_frame_of_docking_scores.head(n = number_of_training_observations))
+    array_of_averaged_predicted_docking_scores_number_of_testing_observations_long = BART_model.predict(two_dimensional_array_of_values_of_predictors_for_testing)
 
     '''
     with pymc.Model() as pymc_model:
@@ -101,6 +108,7 @@ def main():
         inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data = pymc.sample(random_seed = random_seed)
     '''
 
+    '''
     with pymc.Model() as pymc_model:
         tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation = pymc.HalfNormal('P(sigma)', sigma = 100)
         # The standard deviation of docking scores in Data_Frame_Of_Docking_Scores_And_SMILESs.csv is 1.4774124330368725.
@@ -120,15 +128,20 @@ def main():
         )
         inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data = pymc.sample(random_seed = random_seed)
         #inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data.to_netcdf('Inference_Data.netcdf4')
+    '''
 
+    ''' 
     arviz.plot_trace(inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data)
     plt.show()
+    '''
 
+    '''
     with pymc_model:
         pymc.set_data({'MutableData_of_values_of_predictors': two_dimensional_array_of_values_of_predictors_for_testing})
         array_of_predicted_docking_scores_4_chains_by_number_of_draws_by_number_of_testing_observations = pymc.sample_posterior_predictive(inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data)
     array_of_averaged_predicted_docking_scores_number_of_testing_observations_long = array_of_predicted_docking_scores_4_chains_by_number_of_draws_by_number_of_testing_observations.posterior_predictive['P(docking score | mu, sigma)'].mean(axis = (0, 1))
-
+    '''
+    
     tenth_percentile = np.percentile(one_dimensional_array_of_docking_scores_for_testing, 10)
     list_of_indicators_that_observation_belongs_to_lowest_10_percent = [1 if observed_docking_score < tenth_percentile else 0 for observed_docking_score in one_dimensional_array_of_docking_scores_for_testing]
     data_frame_of_observed_and_averaged_predicted_docking_scores_and_indicators_that_observation_belongs_to_lowest_10_percent = pd.DataFrame(
