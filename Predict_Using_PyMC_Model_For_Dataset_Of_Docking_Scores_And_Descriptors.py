@@ -2,6 +2,8 @@
 We use a PYMC model to predict docking scores based on test data not used for training, and compare averaged predicted docking scores and observed docking scores.
 '''
 
+import arviz
+from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 import pymc
@@ -30,10 +32,11 @@ def main():
     '''
 
     data_frame_of_values_of_predictors = feature_matrix_of_docking_scores_and_values_of_descriptors[['LabuteASA', 'MolLogP', 'MaxAbsPartialCharge', 'NumHAcceptors', 'NumHDonors']]
+    #data_frame_of_values_of_predictors = feature_matrix_of_docking_scores_and_values_of_descriptors
     data_frame_of_docking_scores = feature_matrix_of_docking_scores_and_values_of_descriptors['Docking_Score']
 
-    number_of_training_observations = 1_060_613 # 5000
-    number_of_testing_observations = 1_060_613 # 5000
+    number_of_training_observations = 5000 # 1_060_613
+    number_of_testing_observations = 5000 # 1_060_613
     two_dimensional_array_of_values_of_predictors_for_training = data_frame_of_values_of_predictors.head(n = number_of_training_observations).values
     two_dimensional_array_of_values_of_predictors_for_testing = data_frame_of_values_of_predictors.tail(n = number_of_testing_observations).values
     one_dimensional_array_of_docking_scores_for_training = data_frame_of_docking_scores.head(n = number_of_training_observations).values.reshape(-1)
@@ -70,11 +73,24 @@ def main():
         MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
         tensor_variable_representing_prior_probability_density_distribution_for_constant_term = pymc.Normal('P(constant term)', mu = 0, sigma = 10)
         number_of_predictors = two_dimensional_array_of_values_of_predictors_for_training.shape[1]
-        tensor_variable_representing_prior_probability_density_distribution_for_vector_of_coefficients = pymc.Normal('P(vector_of_coefficients)', mu = 0, sigma = 10, shape = number_of_predictors)
+        #tensor_variable_representing_prior_probability_density_distribution_for_vector_of_coefficients = pymc.Normal('P(vector_of_coefficients)', mu = 0, sigma = 10, shape = number_of_predictors)
+        tensor_variable_representing_prior_probability_density_distribution_for_coefficient_of_LabuteASA = pymc.Normal('P(B_LabuteASA)', mu = 0, sigma = 10)
+        tensor_variable_representing_prior_probability_density_distribution_for_coefficient_of_MolLogP = pymc.Normal('P(B_MolLogP)', mu = 0, sigma = 10)
+        tensor_variable_representing_prior_probability_density_distribution_for_coefficient_of_MaxAbsPartialCharge = pymc.Normal('P(B_MaxAbsPartialCharge)', mu = 0, sigma = 10)
+        tensor_variable_representing_prior_probability_density_distribution_for_coefficient_of_NumHAcceptors = pymc.Normal('P(B_NumHAcceptors)', mu = 0, sigma = 10)
+        tensor_variable_representing_prior_probability_density_distribution_for_coefficient_of_NumHDonors = pymc.Normal('P(B_NumHDonors)', mu = 0, sigma = 10)
         tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation = pymc.HalfNormal('P(standard deviation)', sigma = 1)
+        #tensor_variable_representing_expected_value_mu_of_docking_scores = (
+        #    tensor_variable_representing_prior_probability_density_distribution_for_constant_term
+        #    + pymc.math.dot(MutableData_of_values_of_predictors, tensor_variable_representing_prior_probability_density_distribution_for_vector_of_coefficients)
+        #)
         tensor_variable_representing_expected_value_mu_of_docking_scores = (
             tensor_variable_representing_prior_probability_density_distribution_for_constant_term
-            + pymc.math.dot(MutableData_of_values_of_predictors, tensor_variable_representing_prior_probability_density_distribution_for_vector_of_coefficients)
+            + MutableData_of_values_of_predictors[:, 0] * tensor_variable_representing_prior_probability_density_distribution_for_coefficient_of_LabuteASA
+            + MutableData_of_values_of_predictors[:, 1] * tensor_variable_representing_prior_probability_density_distribution_for_coefficient_of_MolLogP
+            + MutableData_of_values_of_predictors[:, 2] * tensor_variable_representing_prior_probability_density_distribution_for_coefficient_of_MaxAbsPartialCharge
+            + MutableData_of_values_of_predictors[:, 3] * tensor_variable_representing_prior_probability_density_distribution_for_coefficient_of_NumHAcceptors
+            + MutableData_of_values_of_predictors[:, 4] * tensor_variable_representing_prior_probability_density_distribution_for_coefficient_of_NumHDonors
         )
         tensor_variable_representing_likelihood_and_sampling_probability_density_distribution_of_docking_scores = pymc.Normal(
             'P(docking score | mu, sigma)',
@@ -104,6 +120,9 @@ def main():
         )
         inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data = pymc.sample(random_seed = random_seed)
         #inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data.to_netcdf('Inference_Data.netcdf4')
+
+    arviz.plot_trace(inference_data_with_samples_from_posterior_probability_density_distribution_statistics_of_sampling_run_and_copy_of_observed_data)
+    plt.show()
 
     with pymc_model:
         pymc.set_data({'MutableData_of_values_of_predictors': two_dimensional_array_of_values_of_predictors_for_testing})
