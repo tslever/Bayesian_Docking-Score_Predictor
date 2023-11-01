@@ -1,0 +1,16 @@
+Friday, 10/27/2023 at 3 PM
+
+Consider an ROC Curve.
+Consider a Gains Curve.
+Important variables have low variance. Examine distributions of variables.
+"Regression just doesn’t decompose variance in a way that provides straightforward answers to such questions" as, "What variables are most important?".
+Consider https://github.com/online-ml/river for training a Bayesian model on a data frame with 1,024 columns related to folded sums of number of occurrences of substructures.
+Consider multiple values of each parameter according to Stochastic Gradient Descent.
+Consider increasing number of draws, reducing number of descriptors, and examining distributions.
+A Bayesian Linear Regression model seems to predict docking scores corresponding to observations with extreme docking scores better than a Bayesian model with a BART model.
+A Bayesian model with a BART model seems to predict docking scores corresponding to observations with docking scores within one standard deviation of a mean better than a Bayesian Linear Regression model.
+Our goal is to maximize the height of the left most bars in an Enrichment Factor Plot and improve the correlation of predicted and observed docking scores.
+Consider developing and ensemble of a Random-Forest model and a Linear-Regression model.
+Consider developing BART model.
+Consider using all descriptors or different subsets of descriptors.
+Consider comparing Enrichment-Factor plots for training and test sets.
