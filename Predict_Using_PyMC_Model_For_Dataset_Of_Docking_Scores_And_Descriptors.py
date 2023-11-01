@@ -32,8 +32,8 @@ def main():
     data_frame_of_values_of_predictors = feature_matrix_of_docking_scores_and_values_of_descriptors[['LabuteASA', 'MolLogP', 'MaxAbsPartialCharge', 'NumHAcceptors', 'NumHDonors']]
     data_frame_of_docking_scores = feature_matrix_of_docking_scores_and_values_of_descriptors['Docking_Score']
 
-    number_of_training_observations = 5000
-    number_of_testing_observations = 5000
+    number_of_training_observations = 1_060_613 # 5000
+    number_of_testing_observations = 1_060_613 # 5000
     two_dimensional_array_of_values_of_predictors_for_training = data_frame_of_values_of_predictors.head(n = number_of_training_observations).values
     two_dimensional_array_of_values_of_predictors_for_testing = data_frame_of_values_of_predictors.tail(n = number_of_testing_observations).values
     one_dimensional_array_of_docking_scores_for_training = data_frame_of_docking_scores.head(n = number_of_training_observations).values.reshape(-1)
