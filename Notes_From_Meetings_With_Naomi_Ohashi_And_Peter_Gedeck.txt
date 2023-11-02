@@ -1,16 +1,30 @@
 Friday, 10/27/2023 at 3 PM
 
-Consider an ROC Curve.
-Consider a Gains Curve.
-Important variables have low variance. Examine distributions of variables.
-"Regression just doesn’t decompose variance in a way that provides straightforward answers to such questions" as, "What variables are most important?".
-Consider https://github.com/online-ml/river for training a Bayesian model on a data frame with 1,024 columns related to folded sums of number of occurrences of substructures.
-Consider multiple values of each parameter according to Stochastic Gradient Descent.
-Consider increasing number of draws, reducing number of descriptors, and examining distributions.
+
+Notes
+
+Our goal is to maximize the height of the left most bars in an Enrichment Factor Plot and improve the correlation of predicted and observed docking scores.
 A Bayesian Linear Regression model seems to predict docking scores corresponding to observations with extreme docking scores better than a Bayesian model with a BART model.
 A Bayesian model with a BART model seems to predict docking scores corresponding to observations with docking scores within one standard deviation of a mean better than a Bayesian Linear Regression model.
-Our goal is to maximize the height of the left most bars in an Enrichment Factor Plot and improve the correlation of predicted and observed docking scores.
-Consider developing and ensemble of a Random-Forest model and a Linear-Regression model.
+
+
+Future Considerations
+
+Consider a Bayesian Neural Network.
+Consider https://github.com/online-ml/river for training a Bayesian model on a data frame with 1,024 columns related to folded sums of number of occurrences of substructures.
+Consider Model Averaging (https://www.pymc.io/projects/docs/en/v3.11.4/pymc-examples/examples/diagnostics_and_criticism/model_averaging.html).
+Consider developing an ensemble of a Random-Forest model and a Linear-Regression model.
+Consider addressing the following warnings by increasing number of draws or reducing number of descriptors.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
+Consider using different subsets of descriptors and Bayesian Model Averaging (https://www.kaggle.com/code/billbasener/bayesian-model-averaging-regression-tutorial).
+Consider an ROC Curve.
+Consider a Gains Curve.
+Consider lazypredict -> LazyRegression.
+
+
+Past Considerations
+
 Consider developing BART model.
-Consider using all descriptors or different subsets of descriptors.
+Consider using all descriptors.
 Consider comparing Enrichment-Factor plots for training and test sets.
