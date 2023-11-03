@@ -18,7 +18,8 @@ Linear Regression: [-4.5 - (-6.75)] / [6.25 - (-12.5)] = 0.12
 Bayesian Linear Regression: [-4.5 - (-6.75)] / [7 - (-12.5)] = 0.115.
 Bayesian model using BART model: [-4.95 - (-6.6)] / (4.5 - (-14)] = 0.089.
 
-Bayesian model using BART model results in the highest enrichment factor (ratio of proportion of observed docking scores in lowest 10 percent corresponding to a predicted docking score in lowest 10 percent to proportion of predicted docking scores in lowest 10 percent) but the lowest range of predicted docking scores.
+An enrichment factor corresponds to a quantile (i.e., a subset of values in an ordered set). The enrichment factor is the ratio of the proportion of observed docking scores in lowest 10 percent corresponding to a predicted docking score in the quantile to the proportion of predicted docking scores in the quantile.
+Bayesian model using BART model results in the highest enrichment factor but the lowest range of predicted docking scores.
 
 BNN results in the lowest enrichment factor but the highest range of predicted docking scores. BNN predicts docking scores less accurately than Bayesian model using BART model for mean-like observed docking scores, but predicts docking scores more accurately than Bayesian model using BART model for extreme observed docking scores.
 
