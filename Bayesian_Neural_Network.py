@@ -1,5 +1,7 @@
 # Runs in Kaggle Notebook on Linux 5.15.133+ with the Python packages specified in Packages_For_Bayesian_Neural_Network_In_Kaggle_Notebook.txt.
 
+import arviz
+from matplotlib import pyplot as plt
 import numpy as np
 import pymc3 as pm
 import theano.tensor as tt
@@ -52,20 +54,41 @@ ann_output = theano.shared(y)
 # Construct the neural network
 neural_network = construct_nn(ann_input, ann_output)
 
-# Perform Bayesian inference using NUTS sampler
-with neural_network:
-    trace = pm.sample(2000, tune=1000, cores=2)
+Trace_Of_Posterior_Probability_Density_Distribution_dot_netcdf4_exists = False
+if not Trace_Of_Posterior_Probability_Density_Distribution_dot_netcdf4_exists:
+
+    # Perform Bayesian inference using NUTS sampler
+    with neural_network:
+        trace = pm.sample(2000, tune=1000, cores=2)
+        arviz.to_netcdf(trace, 'Trace_Of_Posterior_Probability_Density_Distribution.netcdf4')
+
+else:
+
+    trace = arviz.from_netcdf(filename = 'Trace_Of_Posterior_Probability_Density_Distribution.netcdf4')
 
 # Plot the posterior distribution of the weights and biases
-pm.traceplot(trace)
+arviz.plot_trace(trace)
+plt.savefig('Trace_Plot.png')
 
 # Make predictions using the sampled weights
 X_test = np.linspace(0, 1, 100)[:, np.newaxis]
 ann_input.set_value(X_test)
 
 posterior_pred = pm.sample_posterior_predictive(trace, samples=500, model=neural_network)
-y_pred_mean = np.mean(posterior_pred['out'], axis=0)
-y_pred_std = np.std(posterior_pred['out'], axis=0)
+arviz.to_netcdf(posterior_pred, 'Trace_Of_Posterior_Predictive_Probability_Density_Distribution.netcdf4')
+
+y_pred_mean = np.mean(posterior_pred['out'], axis = 0)
+y_pred_std = np.std(posterior_pred['out'], axis = 0)
+
+import pandas as pd
+data_frame_of_observed_X_values_and_observed_y_values = pd.DataFrame({'observed_X_value': X.flatten(), 'observed_y_value': y})
+data_frame_of_observed_X_values_and_observed_y_values.to_csv(path_or_buf = 'Data_Frame_Of_Observed_X_Values_And_Observed_y_Values.csv')
+data_frame_of_test_X_values_averaged_predicted_y_values_and_standard_deviations_of_predicted_y_values = pd.DataFrame(
+    {'test_X_value': X_test.flatten(), 'averaged_predicted_y_value': y_pred_mean, 'standard_deviations_of_predicted_y_values': y_pred_std}
+)
+data_frame_of_test_X_values_averaged_predicted_y_values_and_standard_deviations_of_predicted_y_values.to_csv(
+    path_or_buf = 'Data_Frame_Of_Test_X_Values_Averaged_Predicted_y_Values_And_Standard_Deviations_Of_Predicted_y_Values.csv'
+)
 
 # Plot the predictive mean and uncertainty
 import matplotlib.pyplot as plt
@@ -77,4 +100,4 @@ plt.fill_between(X_test.flatten(), y_pred_mean - 2 * y_pred_std, y_pred_mean + 2
 plt.xlabel('X')
 plt.ylabel('Y')
 plt.legend()
-plt.show()
+plt.savefig('Observed_Y_Values_Vs_Observed_X_Values_Averaged_Predicted_Y_Values_Vs_Test_X_Values_And_Uncertainties_In_Averaged_Predicted_Y_Values_Vs_Test_X_Values.png')
