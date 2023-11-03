@@ -3,28 +3,37 @@ Friday, 10/27/2023 at 3 PM
 
 Notes
 
-Our goal is to maximize the height of the left most bars in an Enrichment Factor Plot and improve the correlation of predicted and observed docking scores.
-A Bayesian Linear Regression model seems to predict docking scores corresponding to observations with extreme docking scores better than a Bayesian model with a BART model.
-A Bayesian model with a BART model seems to predict docking scores corresponding to observations with docking scores within one standard deviation of a mean better than a Bayesian Linear Regression model.
+One goal may be to maximize the height of the left most bars in an Enrichment Factor Plot. Another goal may be to improve the correlation of predicted and observed docking scores. Another goal may be to maximize the ratio of the range of predicted docking scores to the range of observed docking scores.
+
+See below dictionary of models and maximum enrichment factors.
+Bayesian model using a BART model: 1.7
+Bayesian Linear Regression: 1.5
+Linear Regression: 1.5
+BART: 1.45
+BNN: 1.4
+
+See below dictionary of models and ratios of range of predicted docking score to range of observed docking score.
+BNN: [-2.5 - (-7.0)] / (4.5 - (-14)] = 0.243.
+Linear Regression: [-4.5 - (-6.75)] / [6.25 - (-12.5)] = 0.12
+Bayesian Linear Regression: [-4.5 - (-6.75)] / [7 - (-12.5)] = 0.115.
+Bayesian model using BART model: [-4.95 - (-6.6)] / (4.5 - (-14)] = 0.089.
+
+Bayesian model using BART model results in the highest enrichment factor (ratio of ratio of number of observed docking scores in lowest 10 percent corresponding to a predicted docking score in lowest 10 percent to number of observed docking scores in lowest 10 percent to ratio of number of predicted docking scores in lowest 10 percent to total number of docking scores) but the lowest range of predicted docking scores.
+
+BNN results in the lowest enrichment factor but the highest range of predicted docking scores. BNN predicts docking scores less accurately than Bayesian model using BART model for mean-like observed docking scores, but predicts docking scores more accurately than Bayesian model using BART model for extreme observed docking scores.
 
 
 Future Considerations
 
-Consider a Bayesian Neural Network.
+Improve performance of not Linear Regression but BART and Bayesian Linear Regression models, Bayesian model using BART model, and Bayesian Neural Network.
+Consider using different sets of descriptors and aggregated numbers of occurrences of substructures and Bayesian Model Averaging (https://www.kaggle.com/code/billbasener/bayesian-model-averaging-regression-tutorial).
 Consider https://github.com/online-ml/river for training a Bayesian model on a data frame with 1,024 columns related to folded sums of number of occurrences of substructures.
-Consider Model Averaging (https://www.pymc.io/projects/docs/en/v3.11.4/pymc-examples/examples/diagnostics_and_criticism/model_averaging.html).
+Consider Model Averaging to compare models / types of models or to combine models in an ensemble (https://www.pymc.io/projects/docs/en/v3.11.4/pymc-examples/examples/diagnostics_and_criticism/model_averaging.html).
+Consider developing a Random Forest model.
 Consider developing an ensemble of a Random-Forest model and a Linear-Regression model.
-Consider addressing the following warnings by increasing number of draws or reducing number of descriptors.
+Consider addressing warnings like the following warnings. Perhaps increase number of draws or reduce number of descriptors.
 The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
 The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details
-Consider using different subsets of descriptors and Bayesian Model Averaging (https://www.kaggle.com/code/billbasener/bayesian-model-averaging-regression-tutorial).
 Consider an ROC Curve.
 Consider a Gains Curve.
 Consider lazypredict -> LazyRegression.
-
-
-Past Considerations
-
-Consider developing BART model.
-Consider using all descriptors.
-Consider comparing Enrichment-Factor plots for training and test sets.
