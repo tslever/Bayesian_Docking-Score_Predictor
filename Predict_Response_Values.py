@@ -157,6 +157,7 @@ if __name__ == '__main__':
     response = args.response
     type_of_model = args.type_of_model
     should_plot_trace = args.should_plot_trace
+    print(f'number of training or testing observations: {number_of_training_or_testing_observations}')
     print(f'path to dataset: {path_to_dataset}')
     print(f'response: {response}')
     print(f'type of model: {type_of_model}')
