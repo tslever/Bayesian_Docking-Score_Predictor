@@ -47,9 +47,15 @@ def generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_subs
     list_of_columns = ['Docking_Score'] + list_of_columns
     data_frame_of_docking_scores_and_SMILESs = pd.read_csv(filepath_or_buffer = 'Data_Frame_Of_Docking_Scores_And_SMILESs.csv')
     list_of_lists_of_docking_score_and_numbers_of_occurrences_of_substructures = []
-    for i in range(0, 3):
-        docking_score = data_frame_of_docking_scores_and_SMILESs.at[i, "docking score"]
-        SMILES = data_frame_of_docking_scores_and_SMILESs.at[i, "SMILES"]
+    array_of_first_whole_numbers = np.arange(0, data_frame_of_docking_scores_and_SMILESs.shape[0])
+    array_of_random_indices = np.arange(0, data_frame_of_docking_scores_and_SMILESs.shape[0])
+    np.random.shuffle(array_of_random_indices)
+    for i in array_of_first_whole_numbers:
+        if i % 1000 == 0:
+            print('Generating list of docking score and numbers of occurrences of substructures ' + str(i))
+        random_index = array_of_random_indices[i]
+        docking_score = data_frame_of_docking_scores_and_SMILESs.at[random_index, "docking score"]
+        SMILES = data_frame_of_docking_scores_and_SMILESs.at[random_index, "SMILES"]
         molecule = Chem.MolFromSmiles(SMILES)
         #molecule = Chem.MolFromSmiles('OC(=O)CN(CCN(CC(O)=O)CC(O)=O)CC(O)=O')
         list_of_numbers_of_occurrences_of_substructures = convert_to_list_of_numbers_of_occurrences_of_substructures(molecule)
@@ -108,9 +114,21 @@ def generate_feature_matrix_of_docking_scores_and_values_of_descriptors():
     return data_frame_of_docking_scores_and_values_of_descriptors
 
 if __name__ == "__main__":
+        
+        alpha, sigma = 1, 1
+        beta = [1, 2.5]
+        size = 10_000
+        X1 = np.random.randn(size)
+        X2 = np.random.randn(size) * 0.2
+        random_seed = 0
+        Y = alpha + beta[0] * X1 + beta[1] * X2 + np.random.default_rng(random_seed).normal(size = size) * sigma
+        toy_dataset = pd.DataFrame({'Y': Y, 'X1': X1, 'X2': X2})
+        toy_dataset.to_csv(path_or_buf = 'Toy_Dataset.csv', index = False)
+
         #feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures = generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures()
         #print(feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures)
         #feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures.to_csv('Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv', index = False)
-        feature_matrix_of_docking_scores_and_values_of_descriptors = generate_feature_matrix_of_docking_scores_and_values_of_descriptors()
-        print(feature_matrix_of_docking_scores_and_values_of_descriptors)
-        feature_matrix_of_docking_scores_and_values_of_descriptors.to_csv('Feature_Matrix_Of_Docking_Scores_And_Values_Of_Descriptors.csv', index = False)
+
+        #feature_matrix_of_docking_scores_and_values_of_descriptors = generate_feature_matrix_of_docking_scores_and_values_of_descriptors()
+        #print(feature_matrix_of_docking_scores_and_values_of_descriptors)
+        #feature_matrix_of_docking_scores_and_values_of_descriptors.to_csv('Feature_Matrix_Of_Docking_Scores_And_Values_Of_Descriptors.csv', index = False)
