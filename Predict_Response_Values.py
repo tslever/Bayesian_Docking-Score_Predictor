@@ -1,3 +1,8 @@
+'''
+Example usage:
+python Predict_Response_Values.py 5000 .\Toy_Dataset.csv 'Y' 'BART' --should_plot_trace
+'''
+
 import argparse
 import arviz
 from ISLP.bart.bart import BART
