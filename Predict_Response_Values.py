@@ -1,6 +1,8 @@
 '''
 Example usage:
-python Predict_Response_Values.py 5000 .\Toy_Dataset.csv 'Y' 'BART' --should_plot_trace
+python3 Predict_Response_Values.py Bayesian_Neural_Network 5000 Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv Docking_Score
+This command works on Linux but not on Windows.
+Commands with other models work on Windows.
 '''
 
 import argparse
@@ -11,7 +13,9 @@ import numpy as np
 import pandas as pd
 import pymc
 import pymc_bart
+import scipy
 from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
 
 def calculate_one_dimensional_array_of_residual_standard_deviations_slash_errors(
     array_of_averages_of_predicted_response_values,
@@ -27,10 +31,12 @@ def calculate_one_dimensional_array_of_residual_standard_deviations_slash_errors
     )
     return one_dimensional_array_of_standard_deviations_of_predicted_response_values
 
-def main(number_of_training_or_testing_observations, path_to_dataset, response, type_of_model, should_plot_trace):
+def main(model, number_of_training_or_testing_observations, path_to_dataset, response, should_plot_trace):
     random_seed = 0
     np.random.seed(random_seed)
     feature_matrix = pd.read_csv(filepath_or_buffer = path_to_dataset)
+    for column in feature_matrix.columns:
+        feature_matrix[column] = scipy.stats.zscore(feature_matrix[column])
     list_of_columns_other_than_response = feature_matrix.columns.to_list()
     list_of_columns_other_than_response.remove(response)
     data_frame_of_values_of_predictors = feature_matrix[list_of_columns_other_than_response]
@@ -42,7 +48,7 @@ def main(number_of_training_or_testing_observations, path_to_dataset, response, 
     one_dimensional_array_of_response_values_for_training = data_frame_of_response_values.head(n = number_of_training_or_testing_observations).values.reshape(-1)
     one_dimensional_array_of_response_values_for_testing = data_frame_of_response_values.tail(n = number_of_training_or_testing_observations).values.reshape(-1)
 
-    if (type_of_model == 'BART'):
+    if (model == 'BART_Model'):
         BART_model = BART(random_state = random_seed)
         BART_model.fit(data_frame_of_values_of_predictors_for_training, data_frame_of_response_values_for_training)
         one_dimensional_array_of_averages_of_predicted_response_values = BART_model.predict(two_dimensional_array_of_values_of_predictors_for_testing)
@@ -52,8 +58,8 @@ def main(number_of_training_or_testing_observations, path_to_dataset, response, 
             two_dimensional_array_of_values_of_predictors_for_testing
         )
 
-    elif (type_of_model.startswith('Bayesian')):
-        if type_of_model == 'Bayesian_Linear_Regression':
+    elif (model.startswith('Bayesian')):
+        if model == 'Bayesian_Linear_Regression_Model':
             with pymc.Model() as pymc_model:
                 MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
                 tensor_variable_representing_prior_probability_density_distribution_for_constant_term = pymc.Normal('P(constant term)', mu = 0, sigma = 10)
@@ -71,17 +77,17 @@ def main(number_of_training_or_testing_observations, path_to_dataset, response, 
                     observed = one_dimensional_array_of_response_values_for_training
                 )
                 inference_data = pymc.sample(random_seed = random_seed)
-        elif type_of_model == 'Bayesian_Linear_Regression_For_Toy_Dataset':
+        elif model == 'Bayesian_Linear_Regression_Model_For_Toy_Dataset':
             with pymc.Model() as pymc_model:
                 MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
                 tensor_variable_representing_prior_probability_density_distribution_for_constant_term = pymc.Normal('P(constant term)', mu = 1, sigma = 1)
                 number_of_predictors = two_dimensional_array_of_values_of_predictors_for_training.shape[1]
                 tensor_variable_representing_prior_probability_density_distribution_for_vector_of_coefficients = pymc.Normal('P(vector_of_coefficients)', mu = [1, 2.5], sigma = 1, shape = number_of_predictors)
-                tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation = pymc.HalfNormal('P(standard deviation)', sigma = 1)
                 tensor_variable_representing_expected_value_mu_of_response_values = (
                     tensor_variable_representing_prior_probability_density_distribution_for_constant_term
                     + pymc.math.dot(MutableData_of_values_of_predictors, tensor_variable_representing_prior_probability_density_distribution_for_vector_of_coefficients)
                 )
+                tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation = pymc.HalfNormal('P(standard deviation)', sigma = 1)
                 tensor_variable_representing_likelihood_and_sampling_probability_density_distribution_of_response_values = pymc.Normal(
                     'P(response value | mu, sigma)',
                     mu = tensor_variable_representing_expected_value_mu_of_response_values,
@@ -89,9 +95,8 @@ def main(number_of_training_or_testing_observations, path_to_dataset, response, 
                     observed = one_dimensional_array_of_response_values_for_training
                 )
                 inference_data = pymc.sample(random_seed = random_seed)
-        elif type_of_model == 'Bayesian_Model_Using_BART_Model':
+        elif model == 'Bayesian_Model_Using_BART_Model':
             with pymc.Model() as pymc_model:
-                tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation = pymc.HalfNormal('P(sigma)', sigma = 100)
                 MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
                 tensor_variable_representing_expected_value_mu_of_response_values = pymc_bart.BART(
                     name = 'mu',
@@ -99,6 +104,7 @@ def main(number_of_training_or_testing_observations, path_to_dataset, response, 
                     Y = one_dimensional_array_of_response_values_for_training,
                     m = 50
                 )
+                tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation = pymc.HalfNormal('P(sigma)', sigma = 100)
                 tensor_variable_representing_likelihood_and_sampling_probability_density_distribution_of_response_values = pymc.Normal(
                     'P(response value | mu, sigma)',
                     mu = tensor_variable_representing_expected_value_mu_of_response_values,
@@ -106,6 +112,55 @@ def main(number_of_training_or_testing_observations, path_to_dataset, response, 
                     observed = one_dimensional_array_of_response_values_for_training
                 )
                 inference_data = pymc.sample(random_seed = random_seed)
+
+        elif model == 'Bayesian_Neural_Network':
+
+            # Define the neural network architecture with two hidden layers
+            input_size = two_dimensional_array_of_values_of_predictors_for_training.shape[1]
+            hidden_size_1 = 5
+            hidden_size_2 = 3  # Size of the second hidden layer
+
+            # Define the prior for the weights and biases
+            init_w_1 = np.random.randn(input_size, hidden_size_1)
+            init_w_2 = np.random.randn(hidden_size_1, hidden_size_2)
+            init_b_1 = np.zeros(hidden_size_1)
+            init_b_2 = np.zeros(hidden_size_2)
+            init_b_3 = np.array([0.0] * hidden_size_2)
+
+            with pymc.Model() as pymc_model:
+
+                MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
+
+                # Weights and biases from input to the first hidden layer
+                weights_in_1 = pymc.Normal('w_in_1', 0, sigma=1, shape=(input_size, hidden_size_1), initval=init_w_1)
+                biases_1 = pymc.Normal('b_1', 0, sigma=1, shape=hidden_size_1, initval=init_b_1)
+
+                # Weights and biases from the first hidden layer to the second hidden layer
+                weights_1_2 = pymc.Normal('w_1_2', 0, sigma=1, shape=(hidden_size_1, hidden_size_2), initval=init_w_2)
+                biases_2 = pymc.Normal('b_2', 0, sigma=1, shape=hidden_size_2, initval=init_b_2)
+
+                # Weights and biases from the second hidden layer to the output
+                weights_2_out = pymc.Normal('w_out_2', 0, sigma=1, shape=hidden_size_2, initval=init_b_3)
+
+                # Build the neural network
+                act_1 = pymc.math.tanh(pymc.math.dot(MutableData_of_values_of_predictors, weights_in_1) + biases_1)
+                act_2 = pymc.math.tanh(pymc.math.dot(act_1, weights_1_2) + biases_2)
+                tensor_variable_representing_expected_value_mu_of_response_values = pymc.math.dot(act_2, weights_2_out)
+                range_of_observed_response_values = max(one_dimensional_array_of_response_values_for_training) - min(one_dimensional_array_of_response_values_for_training)
+                tensor_variable_representing_expected_value_mu_of_response_values = tensor_variable_representing_expected_value_mu_of_response_values * range_of_observed_response_values
+
+                tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation = pymc.HalfNormal('P(sigma)', sigma = 100)
+
+                # Likelihood (sampling distribution) of the target values
+                tensor_variable_representing_likelihood_and_sampling_probability_density_distribution_of_response_values = pymc.Normal(
+                    'P(response value | mu, sigma)',
+                    mu = tensor_variable_representing_expected_value_mu_of_response_values,
+                    sigma = tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation,
+                    observed = one_dimensional_array_of_response_values_for_training
+                )
+
+                inference_data = pymc.sample(random_seed = random_seed)
+
         if should_plot_trace:
             arviz.plot_trace(inference_data)
             plt.show()
@@ -115,7 +170,7 @@ def main(number_of_training_or_testing_observations, path_to_dataset, response, 
         one_dimensional_array_of_averages_of_predicted_response_values = array_of_predicted_response_values.mean(axis = (0, 1))
         one_dimensional_array_of_standard_deviations_of_predicted_response_values = array_of_predicted_response_values.std(axis = (0, 1))
 
-    elif (type_of_model == 'Linear_Regression'):
+    elif (model == 'Linear_Regression_Model'):
         linear_regression_model = LinearRegression()
         linear_regression_model.fit(two_dimensional_array_of_values_of_predictors_for_training, one_dimensional_array_of_response_values_for_training)
         one_dimensional_array_of_averages_of_predicted_response_values = linear_regression_model.predict(two_dimensional_array_of_values_of_predictors_for_testing)
@@ -126,7 +181,7 @@ def main(number_of_training_or_testing_observations, path_to_dataset, response, 
         )
     
     else:
-        raise Exception(f'We cannot predict response values for type of model "{type_of_model}"')
+        raise Exception(f'We cannot predict response values for type of model "{model}"')
 
     data_frame_of_observed_response_values_and_averages_and_standard_deviations_of_predicted_response_values = pd.DataFrame(
         {
@@ -142,30 +197,37 @@ def main(number_of_training_or_testing_observations, path_to_dataset, response, 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog = 'Predict Response Values', description = 'This program predicts response values.')
+    parser.add_argument(
+        'model',
+        choices = [
+            'BART_Model',
+            'Bayesian_Linear_Regression_Model',
+            'Bayesian_Linear_Regression_Model_For_Toy_Dataset',
+            'Bayesian_Model_Using_BART_Model',
+            'Bayesian_Neural_Network',
+            'Linear_Regression_Model'
+        ],
+        help = 'type of model to train'
+    )
     parser.add_argument('number_of_training_or_testing_observations', help = 'number of training or testing observations')
     parser.add_argument('path_to_dataset', help = 'path to dataset')
     parser.add_argument('response', help = 'response')
-    parser.add_argument(
-        'type_of_model',
-        choices = ['BART', 'Bayesian_Linear_Regression', 'Bayesian_Model_Using_BART_Model', 'Bayesian_Linear_Regression_For_Toy_Dataset', 'Bayesian_Neural_Network', 'Linear_Regression'],
-        help = 'type of model to train'
-    )
     parser.add_argument('--should_plot_trace', action = 'store_true', help = 'should plot trace of samples from posterior probability density distribution')
     args = parser.parse_args()
+    model = args.model
     number_of_training_or_testing_observations = int(args.number_of_training_or_testing_observations)
     path_to_dataset = args.path_to_dataset
     response = args.response
-    type_of_model = args.type_of_model
     should_plot_trace = args.should_plot_trace
+    print(f'model: {model}')
     print(f'number of training or testing observations: {number_of_training_or_testing_observations}')
     print(f'path to dataset: {path_to_dataset}')
     print(f'response: {response}')
-    print(f'type of model: {type_of_model}')
     print(f'should_plot_trace: {should_plot_trace}')
     main(
+        model = model,
         number_of_training_or_testing_observations = number_of_training_or_testing_observations,
         path_to_dataset = path_to_dataset,
         response = response,
-        type_of_model = type_of_model,
         should_plot_trace = should_plot_trace
     )
