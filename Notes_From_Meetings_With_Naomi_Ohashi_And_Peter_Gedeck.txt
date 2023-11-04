@@ -3,20 +3,22 @@ Friday, 10/27/2023 at 3 PM
 
 Notes
 
-One goal may be to maximize the height of the left most bars in an Enrichment Factor Plot. Another goal may be to improve the correlation of predicted and observed docking scores. Another goal may be to maximize the ratio of the range of predicted docking scores to the range of observed docking scores.
+One goal may be to maximize the height of the left most bars in an Enrichment Factor Plot.
+Another goal may be to improve the correlation of predicted and observed docking scores.
+Another goal may be to maximize the ratio of the range of predicted docking scores to the range of observed docking scores.
 
-See below dictionary of models and maximum enrichment factors.
-Bayesian model using a BART model: 1.7
-Bayesian Linear Regression: 1.5
-Linear Regression: 1.5
-BART: 1.45
-BNN: 1.4
+See below dictionary of models and maximum enrichment factors for feature matrix of docking scores and numbers of occurrences of substructures.
+Bayesian model using a BART model: ?
+Bayesian Linear Regression: ?
+Linear Regression: ?
+BART: ?
+BNN: ?
 
 See below dictionary of models and ratios of range of predicted docking score to range of observed docking score.
-BNN: [-2.5 - (-7.0)] / (4.5 - (-14)] = 0.243.
-Linear Regression: [-4.5 - (-6.75)] / [6.25 - (-12.5)] = 0.12
-Bayesian Linear Regression: [-4.5 - (-6.75)] / [7 - (-12.5)] = 0.115.
-Bayesian model using BART model: [-4.95 - (-6.6)] / (4.5 - (-14)] = 0.089.
+BNN: [? - ?] / (?- ?] = ?.
+Linear Regression: [? - ?] / (?- ?] = ?.
+Bayesian Linear Regression: [? - ?] / (?- ?] = ?.
+Bayesian model using BART model: [? - ?] / (?- ?] = ?.
 
 An enrichment factor corresponds to a quantile (i.e., a continuous subset of values in an ordered set).
 In our case, an enrichment factor corresponds to a quantile of predicted docking scores
@@ -29,7 +31,7 @@ BNN results in the lowest enrichment factor but the highest range of predicted d
 
 Future Considerations
 
-Improve performance of not Linear Regression but BART and Bayesian Linear Regression models, Bayesian model using BART model, and Bayesian Neural Network.
+Improve performance of not Linear Regression but BART and Bayesian Linear Regression models, Bayesian model using BART model, and Bayesian Neural Network. Increase variance of priors for BNN.
 Consider using different sets of descriptors and aggregated numbers of occurrences of substructures and Bayesian Model Averaging (https://www.kaggle.com/code/billbasener/bayesian-model-averaging-regression-tutorial).
 Consider https://github.com/online-ml/river for training a Bayesian model on a data frame with 1,024 columns related to folded sums of number of occurrences of substructures.
 Consider Model Averaging to compare models / types of models or to combine models in an ensemble (https://www.pymc.io/projects/docs/en/v3.11.4/pymc-examples/examples/diagnostics_and_criticism/model_averaging.html).
