@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 import pymc
 import pymc_bart
+import pymc.sampling.jax as pmjax
 import scipy
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
@@ -94,7 +95,7 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
                     sigma = tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation,
                     observed = one_dimensional_array_of_response_values_for_training
                 )
-                inference_data = pymc.sample(random_seed = random_seed)
+                inference_data = pmjax.sample_numpyro_nuts(random_seed = random_seed, chain_method = 'vectorized')
         elif model == 'Bayesian_Model_Using_BART_Model':
             with pymc.Model() as pymc_model:
                 MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
@@ -159,7 +160,7 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
                     observed = one_dimensional_array_of_response_values_for_training
                 )
 
-                inference_data = pymc.sample(random_seed = random_seed)
+                inference_data = pmjax.sample_numpyro_nuts(random_seed = random_seed, chain_method = 'vectorized')
 
         if should_plot_trace:
             arviz.plot_trace(inference_data)
