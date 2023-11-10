@@ -112,7 +112,7 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
                     sigma = tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation,
                     observed = one_dimensional_array_of_response_values_for_training
                 )
-                inference_data = pmjax.sample_numpyro_nuts(random_seed = random_seed, chain_method = 'vectorized')
+                inference_data = pymc.sample(random_seed = random_seed)
 
         elif model == 'Bayesian_Neural_Network':
 
