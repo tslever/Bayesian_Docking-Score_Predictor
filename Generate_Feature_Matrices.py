@@ -46,7 +46,7 @@ def generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_subs
     list_of_columns = ['C' + str(i) for i in range(0, 1024)]
     list_of_columns = ['Docking_Score'] + list_of_columns
     data_frame_of_docking_scores_and_SMILESs = pd.read_csv(filepath_or_buffer = 'Data_Frame_Of_Docking_Scores_And_SMILESs.csv')
-    list_of_lists_of_docking_score_and_numbers_of_occurrences_of_substructures = []
+    #list_of_lists_of_docking_score_and_numbers_of_occurrences_of_substructures = []
     array_of_first_whole_numbers = np.arange(0, data_frame_of_docking_scores_and_SMILESs.shape[0])
     array_of_random_indices = np.arange(0, data_frame_of_docking_scores_and_SMILESs.shape[0])
     np.random.shuffle(array_of_random_indices)
@@ -60,9 +60,12 @@ def generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_subs
         #molecule = Chem.MolFromSmiles('OC(=O)CN(CCN(CC(O)=O)CC(O)=O)CC(O)=O')
         list_of_numbers_of_occurrences_of_substructures = convert_to_list_of_numbers_of_occurrences_of_substructures(molecule)
         list_of_docking_score_and_numbers_of_occurrences_of_substructures = [docking_score] + list_of_numbers_of_occurrences_of_substructures
-        list_of_lists_of_docking_score_and_numbers_of_occurrences_of_substructures.append(list_of_docking_score_and_numbers_of_occurrences_of_substructures)
-    data_frame_of_docking_scores_and_numbers_of_occurrences_of_substructures = pd.DataFrame(list_of_lists_of_docking_score_and_numbers_of_occurrences_of_substructures, columns = list_of_columns)
-    return data_frame_of_docking_scores_and_numbers_of_occurrences_of_substructures
+        with open('Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv', 'a') as file:
+            string_of_docking_score_and_numbers_of_occurrences_of_substructures = str(list_of_docking_score_and_numbers_of_occurrences_of_substructures)
+            file.write(string_of_docking_score_and_numbers_of_occurrences_of_substructures + '\n')
+        #list_of_lists_of_docking_score_and_numbers_of_occurrences_of_substructures.append(list_of_docking_score_and_numbers_of_occurrences_of_substructures)
+    #data_frame_of_docking_scores_and_numbers_of_occurrences_of_substructures = pd.DataFrame(list_of_lists_of_docking_score_and_numbers_of_occurrences_of_substructures, columns = list_of_columns)
+    #return data_frame_of_docking_scores_and_numbers_of_occurrences_of_substructures
 
 def generate_feature_matrix_of_docking_scores_and_values_of_descriptors():
     '''
@@ -115,6 +118,7 @@ def generate_feature_matrix_of_docking_scores_and_values_of_descriptors():
 
 if __name__ == "__main__":
         
+        '''
         alpha, sigma = 1, 1
         beta = [1, 2.5]
         size = 10_000
@@ -124,11 +128,14 @@ if __name__ == "__main__":
         Y = alpha + beta[0] * X1 + beta[1] * X2 + np.random.default_rng(random_seed).normal(size = size) * sigma
         toy_dataset = pd.DataFrame({'Y': Y, 'X1': X1, 'X2': X2})
         toy_dataset.to_csv(path_or_buf = 'Toy_Dataset.csv', index = False)
+        '''
 
+        generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures()
         #feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures = generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures()
-        #print(feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures)
         #feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_substructures.to_csv('Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv', index = False)
 
-        #feature_matrix_of_docking_scores_and_values_of_descriptors = generate_feature_matrix_of_docking_scores_and_values_of_descriptors()
-        #print(feature_matrix_of_docking_scores_and_values_of_descriptors)
-        #feature_matrix_of_docking_scores_and_values_of_descriptors.to_csv('Feature_Matrix_Of_Docking_Scores_And_Values_Of_Descriptors.csv', index = False)
+        '''
+        feature_matrix_of_docking_scores_and_values_of_descriptors = generate_feature_matrix_of_docking_scores_and_values_of_descriptors()
+        print(feature_matrix_of_docking_scores_and_values_of_descriptors)
+        feature_matrix_of_docking_scores_and_values_of_descriptors.to_csv('Feature_Matrix_Of_Docking_Scores_And_Values_Of_Descriptors.csv', index = False)
+        '''
