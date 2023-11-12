@@ -47,6 +47,7 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
         list_of_values = line.split(',')
         number_of_columns = len(list_of_values)
     assert((number_of_lines > 0) and (number_of_columns > 0))
+    import pdb; pdb.set_trace()
     two_dimensional_array_of_values_of_predictors_for_training = np.zeros((number_of_training_or_testing_observations, number_of_columns - 1))
     one_dimensional_array_of_response_values_for_training = np.zeros(number_of_training_or_testing_observations)
     two_dimensional_array_of_values_of_predictors_for_testing = np.zeros((number_of_training_or_testing_observations, number_of_columns - 1))
@@ -54,6 +55,8 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
     with open(path_to_dataset, 'r') as file:
         index_of_line = 0
         for line in file:
+            if index_of_line % 10_000 == 0:
+                print(f'Loading row {index_of_line} of dataset')
             line = line.strip()
             list_of_values = line.split(',')
             if index_of_line < half_of_number_of_lines:
