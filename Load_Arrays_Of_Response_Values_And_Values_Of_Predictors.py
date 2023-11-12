@@ -32,7 +32,8 @@ print(two_dimensional_array_of_values_of_predictors_for_testing[0:3, 0:3])
 print('One dimensional array of values of predictors for testing has shape ' + str(one_dimensional_array_of_response_values_for_testing.shape))
 print(one_dimensional_array_of_response_values_for_testing[0:3])
 for i in range(0, two_dimensional_array_of_values_of_predictors_for_training.shape[1]):
-    print(f'Standardizing column {i}')
+    if i % 10 == 0:
+        print(f'Standardizing column {i}')
     random_sample = np.random.choice(two_dimensional_array_of_values_of_predictors_for_training[:, i], 10_000, replace = False)
     two_dimensional_array_of_values_of_predictors_for_training[:, i] = (two_dimensional_array_of_values_of_predictors_for_training[:, i] - np.mean(random_sample)) / np.std(random_sample)
     random_sample = np.random.choice(two_dimensional_array_of_values_of_predictors_for_testing[:, i], 10_000, replace = False)
