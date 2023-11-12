@@ -36,17 +36,24 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
     random_seed = 0
     np.random.seed(random_seed)
 
-    two_dimensional_array_of_values_of_predictors_for_training = np.zeros((number_of_training_or_testing_observations, 1024))
-    one_dimensional_array_of_response_values_for_training = np.zeros(number_of_training_or_testing_observations)
-    two_dimensional_array_of_values_of_predictors_for_testing = np.zeros((number_of_training_or_testing_observations, 1024))
-    one_dimensional_array_of_response_values_for_testing = np.zeros(number_of_training_or_testing_observations)
+    number_of_lines = -1
     with open(path_to_dataset, 'r') as file:
         number_of_lines = sum(1 for line in file)
-        half_of_number_of_lines = number_of_lines // 2
+    half_of_number_of_lines = number_of_lines // 2
+    number_of_columns = -1
+    with open(path_to_dataset, 'r') as file:
+        line = file.readline()
+        line = line.strip()
+        list_of_values = line.split(',')
+        number_of_columns = len(list_of_values)
+    assert((number_of_lines > 0) and (number_of_columns > 0))
+    two_dimensional_array_of_values_of_predictors_for_training = np.zeros((number_of_training_or_testing_observations, number_of_columns - 1))
+    one_dimensional_array_of_response_values_for_training = np.zeros(number_of_training_or_testing_observations)
+    two_dimensional_array_of_values_of_predictors_for_testing = np.zeros((number_of_training_or_testing_observations, number_of_columns - 1))
+    one_dimensional_array_of_response_values_for_testing = np.zeros(number_of_training_or_testing_observations)
     with open(path_to_dataset, 'r') as file:
         index_of_line = 0
         for line in file:
-            #import pdb; pdb.set_trace()
             line = line.strip()
             list_of_values = line.split(',')
             if index_of_line < half_of_number_of_lines:
@@ -60,20 +67,6 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
     one_dimensional_array_of_response_values_for_training = scipy.stats.zscore(one_dimensional_array_of_response_values_for_training)
     two_dimensional_array_of_values_of_predictors_for_testing = scipy.stats.zscore(two_dimensional_array_of_values_of_predictors_for_testing, axis = 0)
     one_dimensional_array_of_response_values_for_testing = scipy.stats.zscore(one_dimensional_array_of_response_values_for_testing)
-
-    #feature_matrix = pd.read_csv(filepath_or_buffer = path_to_dataset)
-    #for column in feature_matrix.columns:
-    #    feature_matrix[column] = scipy.stats.zscore(feature_matrix[column])
-    #list_of_columns_other_than_response = feature_matrix.columns.to_list()
-    #list_of_columns_other_than_response.remove(response)
-    #data_frame_of_values_of_predictors = feature_matrix[list_of_columns_other_than_response]
-    #data_frame_of_response_values = feature_matrix[response]
-    #data_frame_of_values_of_predictors_for_training = data_frame_of_values_of_predictors.head(n = number_of_training_or_testing_observations)
-    #data_frame_of_response_values_for_training = data_frame_of_response_values.head(n = number_of_training_or_testing_observations)
-    #two_dimensional_array_of_values_of_predictors_for_training = data_frame_of_values_of_predictors_for_training.values
-    #two_dimensional_array_of_values_of_predictors_for_testing = data_frame_of_values_of_predictors.tail(n = number_of_training_or_testing_observations).values
-    #one_dimensional_array_of_response_values_for_training = data_frame_of_response_values.head(n = number_of_training_or_testing_observations).values.reshape(-1)
-    #one_dimensional_array_of_response_values_for_testing = data_frame_of_response_values.tail(n = number_of_training_or_testing_observations).values.reshape(-1)
 
     if (model == 'BART_Model'):
         BART_model = BART(random_state = random_seed)
