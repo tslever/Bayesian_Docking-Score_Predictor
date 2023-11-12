@@ -35,41 +35,29 @@ def calculate_one_dimensional_array_of_residual_standard_deviations_slash_errors
 def main(model, number_of_training_or_testing_observations, path_to_dataset, response, should_plot_trace):
     random_seed = 0
     np.random.seed(random_seed)
-
-    number_of_lines = -1
-    with open(path_to_dataset, 'r') as file:
-        number_of_lines = sum(1 for line in file)
-    half_of_number_of_lines = number_of_lines // 2
-    number_of_columns = -1
-    with open(path_to_dataset, 'r') as file:
-        line = file.readline()
-        line = line.strip()
-        list_of_values = line.split(',')
-        number_of_columns = len(list_of_values)
-    assert((number_of_lines > 0) and (number_of_columns > 0))
+    feature_matrix = np.loadtxt(path_to_dataset, delimiter = ',')
+    number_of_rows = feature_matrix.shape[0]
+    half_number_of_rows = number_of_rows // 2
+    two_dimensional_array_of_values_of_predictors_for_training = feature_matrix[0:half_number_of_rows, 1:]
+    one_dimensional_array_of_response_values_for_training = feature_matrix[0:half_number_of_rows, 0]
+    two_dimensional_array_of_values_of_predictors_for_testing = feature_matrix[half_number_of_rows:, 1:]
+    one_dimensional_array_of_response_values_for_testing = feature_matrix[half_number_of_rows:, 0]
     import pdb; pdb.set_trace()
-    two_dimensional_array_of_values_of_predictors_for_training = np.zeros((number_of_training_or_testing_observations, number_of_columns - 1))
-    one_dimensional_array_of_response_values_for_training = np.zeros(number_of_training_or_testing_observations)
-    two_dimensional_array_of_values_of_predictors_for_testing = np.zeros((number_of_training_or_testing_observations, number_of_columns - 1))
-    one_dimensional_array_of_response_values_for_testing = np.zeros(number_of_training_or_testing_observations)
-    with open(path_to_dataset, 'r') as file:
-        index_of_line = 0
-        for line in file:
-            if index_of_line % 10_000 == 0:
-                print(f'Loading row {index_of_line} of dataset')
-            line = line.strip()
-            list_of_values = line.split(',')
-            if index_of_line < half_of_number_of_lines:
-                one_dimensional_array_of_response_values_for_training[index_of_line] = list_of_values[0]
-                two_dimensional_array_of_values_of_predictors_for_training[index_of_line, :] = list_of_values[1:]
-            else:
-                one_dimensional_array_of_response_values_for_testing[index_of_line - half_of_number_of_lines] = list_of_values[0]
-                two_dimensional_array_of_values_of_predictors_for_testing[index_of_line - half_of_number_of_lines, :] = list_of_values[1:]
-            index_of_line += 1
-    two_dimensional_array_of_values_of_predictors_for_training = scipy.stats.zscore(two_dimensional_array_of_values_of_predictors_for_training, axis = 0)
-    one_dimensional_array_of_response_values_for_training = scipy.stats.zscore(one_dimensional_array_of_response_values_for_training)
-    two_dimensional_array_of_values_of_predictors_for_testing = scipy.stats.zscore(two_dimensional_array_of_values_of_predictors_for_testing, axis = 0)
-    one_dimensional_array_of_response_values_for_testing = scipy.stats.zscore(one_dimensional_array_of_response_values_for_testing)
+    for i in range(0, 1):
+    #for i in range(0, feature_matrix.shape[1]):
+        print(f'Standardizing column {i}')
+        random_sample = np.random.choice(two_dimensional_array_of_values_of_predictors_for_training[:, i], 10_000, replace = False)
+        two_dimensional_array_of_values_of_predictors_for_training[:, i] = (two_dimensional_array_of_values_of_predictors_for_training[:, i] - np.mean(random_sample)) / np.std(random_sample)
+        random_sample = np.random.choice(two_dimensional_array_of_values_of_predictors_for_testing[:, i], 10_000, replace = False)
+        two_dimensional_array_of_values_of_predictors_for_testing[:, i] = (two_dimensional_array_of_values_of_predictors_for_testing[:, i] - np.mean(random_sample)) / np.std(random_sample)
+    random_sample = np.random.choice(one_dimensional_array_of_response_values_for_training, 10_000, replace = False)
+    one_dimensional_array_of_response_values_for_training = (one_dimensional_array_of_response_values_for_training - np.mean(random_sample)) / np.std(random_sample)
+    random_sample = np.random.choice(one_dimensional_array_of_response_values_for_testing, 10_000, replace = False)
+    one_dimensional_array_of_response_values_for_testing = (one_dimensional_array_of_response_values_for_testing - np.mean(random_sample)) / np.std(random_sample)
+    np.savetxt('Two_Dimensional_Array_Of_Values_Of_Predictors_For_Training.csv', two_dimensional_array_of_values_of_predictors_for_training, delimiter = ',')
+    np.savetxt('Two_Dimensional_Array_Of_Values_Of_Predictors_For_Testing.csv', two_dimensional_array_of_values_of_predictors_for_testing, delimiter = ',')
+    np.savetxt('One_Dimensional_Array_Of_Response_Values_For_Training.csv', two_dimensional_array_of_values_of_predictors_for_training, delimiter = ',')
+    np.savetxt('One_Dimensional_Array_Of_Response_Values_For_Testing.csv', two_dimensional_array_of_values_of_predictors_for_testing, delimiter = ',')
 
     if (model == 'BART_Model'):
         BART_model = BART(random_state = random_seed)
