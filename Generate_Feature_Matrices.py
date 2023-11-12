@@ -14,9 +14,9 @@ With a feature matrix we can build a model of docking score vs. list.
 # https://stackoverflow.com/a/55119975
 def convert_to_list_of_numbers_of_occurrences_of_substructures(molecule):
     fingerprint = AllChem.GetHashedMorganFingerprint(mol = molecule, radius = 2, nBits = 1024)
-    array_of_number_of_occurrences_of_substructures = np.zeros((1024,))
+    array_of_number_of_occurrences_of_substructures = np.zeros((1024,), dtype = np.intc)
     for key, value in fingerprint.GetNonzeroElements().items():
-        array_of_number_of_occurrences_of_substructures[key] = value
+        array_of_number_of_occurrences_of_substructures[key] = int(value)
     list_of_numbers_of_occurrences_of_substructures = array_of_number_of_occurrences_of_substructures.tolist()
     return(list_of_numbers_of_occurrences_of_substructures)
 
@@ -50,7 +50,7 @@ def generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_subs
     array_of_first_whole_numbers = np.arange(0, data_frame_of_docking_scores_and_SMILESs.shape[0])
     array_of_random_indices = np.arange(0, data_frame_of_docking_scores_and_SMILESs.shape[0])
     np.random.shuffle(array_of_random_indices)
-    for i in array_of_first_whole_numbers:
+    for i in range(0, 10_000): #array_of_first_whole_numbers:
         if i % 1000 == 0:
             print('Generating list of docking score and numbers of occurrences of substructures ' + str(i))
         random_index = array_of_random_indices[i]
@@ -60,8 +60,9 @@ def generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_subs
         #molecule = Chem.MolFromSmiles('OC(=O)CN(CCN(CC(O)=O)CC(O)=O)CC(O)=O')
         list_of_numbers_of_occurrences_of_substructures = convert_to_list_of_numbers_of_occurrences_of_substructures(molecule)
         list_of_docking_score_and_numbers_of_occurrences_of_substructures = [docking_score] + list_of_numbers_of_occurrences_of_substructures
+        list_of_string_representations_of_docking_score_and_numbers_of_occurrences_of_substructures = [str(i) for i in list_of_docking_score_and_numbers_of_occurrences_of_substructures]
         with open('Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv', 'a') as file:
-            string_of_docking_score_and_numbers_of_occurrences_of_substructures = str(list_of_docking_score_and_numbers_of_occurrences_of_substructures)
+            string_of_docking_score_and_numbers_of_occurrences_of_substructures = ','.join(list_of_string_representations_of_docking_score_and_numbers_of_occurrences_of_substructures)
             file.write(string_of_docking_score_and_numbers_of_occurrences_of_substructures + '\n')
         #list_of_lists_of_docking_score_and_numbers_of_occurrences_of_substructures.append(list_of_docking_score_and_numbers_of_occurrences_of_substructures)
     #data_frame_of_docking_scores_and_numbers_of_occurrences_of_substructures = pd.DataFrame(list_of_lists_of_docking_score_and_numbers_of_occurrences_of_substructures, columns = list_of_columns)
