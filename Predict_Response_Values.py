@@ -42,9 +42,8 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
     one_dimensional_array_of_response_values_for_training = feature_matrix[0:half_number_of_rows, 0]
     two_dimensional_array_of_values_of_predictors_for_testing = feature_matrix[half_number_of_rows:, 1:]
     one_dimensional_array_of_response_values_for_testing = feature_matrix[half_number_of_rows:, 0]
-    import pdb; pdb.set_trace()
-    for i in range(0, 1):
-    #for i in range(0, feature_matrix.shape[1]):
+    #import pdb; pdb.set_trace()
+    for i in range(0, feature_matrix.shape[1]):
         print(f'Standardizing column {i}')
         random_sample = np.random.choice(two_dimensional_array_of_values_of_predictors_for_training[:, i], 10_000, replace = False)
         two_dimensional_array_of_values_of_predictors_for_training[:, i] = (two_dimensional_array_of_values_of_predictors_for_training[:, i] - np.mean(random_sample)) / np.std(random_sample)
