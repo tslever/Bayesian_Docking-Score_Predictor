@@ -36,12 +36,22 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
     random_seed = 0
     np.random.seed(random_seed)
     feature_matrix = np.loadtxt(path_to_dataset, delimiter = ',')
+    print('Feature matrix has shape ' + str(feature_matrix.shape))
+    print(feature_matrix[0:3, 0:3])
     number_of_rows = feature_matrix.shape[0]
     half_number_of_rows = number_of_rows // 2
     two_dimensional_array_of_values_of_predictors_for_training = feature_matrix[0:half_number_of_rows, 1:]
     one_dimensional_array_of_response_values_for_training = feature_matrix[0:half_number_of_rows, 0]
     two_dimensional_array_of_values_of_predictors_for_testing = feature_matrix[half_number_of_rows:, 1:]
     one_dimensional_array_of_response_values_for_testing = feature_matrix[half_number_of_rows:, 0]
+    print('Two dimensional array of values of predictors for training has shape ' + str(two_dimensional_array_of_values_of_predictors_for_training.shape))
+    print(two_dimensional_array_of_values_of_predictors_for_training[0:3, 0:3])
+    print('One dimensional array of response values for training has shape ' + str(one_dimensional_array_of_response_values_for_training.shape))
+    print(one_dimensional_array_of_response_values_for_training[0:3])
+    print('Two dimensional array of values of predictors for testing has shape ' + str(two_dimensional_array_of_values_of_predictors_for_testing.shape))
+    print(two_dimensional_array_of_values_of_predictors_for_testing[0:3, 0:3])
+    print('One dimensional array of values of predictors for testing has shape ' + str(one_dimensional_array_of_values_of_predictors_for_testing.shape))
+    print(one_dimensional_array_of_values_of_predictors_for_testing[0:3])
     #import pdb; pdb.set_trace()
     for i in range(0, two_dimensional_array_of_values_of_predictors_for_training.shape[1]):
         print(f'Standardizing column {i}')
@@ -53,6 +63,14 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
     one_dimensional_array_of_response_values_for_training = (one_dimensional_array_of_response_values_for_training - np.mean(random_sample)) / np.std(random_sample)
     random_sample = np.random.choice(one_dimensional_array_of_response_values_for_testing, 10_000, replace = False)
     one_dimensional_array_of_response_values_for_testing = (one_dimensional_array_of_response_values_for_testing - np.mean(random_sample)) / np.std(random_sample)
+    print('Two dimensional array of values of predictors for training has shape ' + str(two_dimensional_array_of_values_of_predictors_for_training.shape))
+    print(two_dimensional_array_of_values_of_predictors_for_training[0:3, 0:3])
+    print('One dimensional array of response values for training has shape ' + str(one_dimensional_array_of_response_values_for_training.shape))
+    print(one_dimensional_array_of_response_values_for_training[0:3])
+    print('Two dimensional array of values of predictors for testing has shape ' + str(two_dimensional_array_of_values_of_predictors_for_testing.shape))
+    print(two_dimensional_array_of_values_of_predictors_for_testing[0:3, 0:3])
+    print('One dimensional array of values of predictors for testing has shape ' + str(one_dimensional_array_of_values_of_predictors_for_testing.shape))
+    print(one_dimensional_array_of_values_of_predictors_for_testing[0:3])
     np.savetxt('Two_Dimensional_Array_Of_Values_Of_Predictors_For_Training.csv', two_dimensional_array_of_values_of_predictors_for_training, delimiter = ',')
     np.savetxt('Two_Dimensional_Array_Of_Values_Of_Predictors_For_Testing.csv', two_dimensional_array_of_values_of_predictors_for_testing, delimiter = ',')
     np.savetxt('One_Dimensional_Array_Of_Response_Values_For_Training.csv', two_dimensional_array_of_values_of_predictors_for_training, delimiter = ',')
