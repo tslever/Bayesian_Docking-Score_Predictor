@@ -50,7 +50,7 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
     print(one_dimensional_array_of_response_values_for_training[0:3])
     print('Two dimensional array of values of predictors for testing has shape ' + str(two_dimensional_array_of_values_of_predictors_for_testing.shape))
     print(two_dimensional_array_of_values_of_predictors_for_testing[0:3, 0:3])
-    print('One dimensional array of values of predictors for testing has shape ' + str(one_dimensional_array_of_values_of_predictors_for_testing.shape))
+    print('One dimensional array of values of predictors for testing has shape ' + str(one_dimensional_array_of_response_values_for_testing.shape))
     print(one_dimensional_array_of_response_values_for_testing[0:3])
     #import pdb; pdb.set_trace()
     for i in range(0, two_dimensional_array_of_values_of_predictors_for_training.shape[1]):
@@ -69,7 +69,7 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
     print(one_dimensional_array_of_response_values_for_training[0:3])
     print('Two dimensional array of values of predictors for testing has shape ' + str(two_dimensional_array_of_values_of_predictors_for_testing.shape))
     print(two_dimensional_array_of_values_of_predictors_for_testing[0:3, 0:3])
-    print('One dimensional array of values of predictors for testing has shape ' + str(one_dimensional_array_of_values_of_predictors_for_testing.shape))
+    print('One dimensional array of values of predictors for testing has shape ' + str(one_dimensional_array_of_response_values_for_testing.shape))
     print(one_dimensional_array_of_response_values_for_testing[0:3])
     np.savetxt('Two_Dimensional_Array_Of_Values_Of_Predictors_For_Training.csv', two_dimensional_array_of_values_of_predictors_for_training, delimiter = ',')
     np.savetxt('Two_Dimensional_Array_Of_Values_Of_Predictors_For_Testing.csv', two_dimensional_array_of_values_of_predictors_for_testing, delimiter = ',')
