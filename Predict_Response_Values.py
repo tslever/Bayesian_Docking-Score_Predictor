@@ -71,10 +71,10 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
     print(two_dimensional_array_of_values_of_predictors_for_testing[0:3, 0:3])
     print('One dimensional array of values of predictors for testing has shape ' + str(one_dimensional_array_of_response_values_for_testing.shape))
     print(one_dimensional_array_of_response_values_for_testing[0:3])
-    np.savetxt('Two_Dimensional_Array_Of_Values_Of_Predictors_For_Training.csv', two_dimensional_array_of_values_of_predictors_for_training, delimiter = ',')
-    np.savetxt('Two_Dimensional_Array_Of_Values_Of_Predictors_For_Testing.csv', two_dimensional_array_of_values_of_predictors_for_testing, delimiter = ',')
-    np.savetxt('One_Dimensional_Array_Of_Response_Values_For_Training.csv', two_dimensional_array_of_values_of_predictors_for_training, delimiter = ',')
-    np.savetxt('One_Dimensional_Array_Of_Response_Values_For_Testing.csv', two_dimensional_array_of_values_of_predictors_for_testing, delimiter = ',')
+    #np.savetxt('Two_Dimensional_Array_Of_Values_Of_Predictors_For_Training.csv', two_dimensional_array_of_values_of_predictors_for_training, delimiter = ',')
+    #np.savetxt('Two_Dimensional_Array_Of_Values_Of_Predictors_For_Testing.csv', two_dimensional_array_of_values_of_predictors_for_testing, delimiter = ',')
+    #np.savetxt('One_Dimensional_Array_Of_Response_Values_For_Training.csv', two_dimensional_array_of_values_of_predictors_for_training, delimiter = ',')
+    #np.savetxt('One_Dimensional_Array_Of_Response_Values_For_Testing.csv', two_dimensional_array_of_values_of_predictors_for_testing, delimiter = ',')
 
     if (model == 'BART_Model'):
         BART_model = BART(random_state = random_seed)
