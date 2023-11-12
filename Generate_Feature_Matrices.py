@@ -50,7 +50,7 @@ def generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_subs
     array_of_first_whole_numbers = np.arange(0, data_frame_of_docking_scores_and_SMILESs.shape[0])
     array_of_random_indices = np.arange(0, data_frame_of_docking_scores_and_SMILESs.shape[0])
     np.random.shuffle(array_of_random_indices)
-    for i in range(0, 10_000): #array_of_first_whole_numbers:
+    for i in array_of_first_whole_numbers:
         if i % 1000 == 0:
             print('Generating list of docking score and numbers of occurrences of substructures ' + str(i))
         random_index = array_of_random_indices[i]
