@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import pdb
 import pymc
+import pymc.sampling.jax as jax
 
 def predict_response_values_using_BNN(
     two_dimensional_array_of_values_of_predictors_for_training,
@@ -9,6 +10,8 @@ def predict_response_values_using_BNN(
     two_dimensional_array_of_values_of_predictors_for_testing,
     one_dimensional_array_of_response_values_for_testing
 ):
+    random_seed = 0
+    np.random.seed(random_seed)
     input_size = two_dimensional_array_of_values_of_predictors_for_training.shape[1]
     hidden_size_1 = 5
     hidden_size_2 = 3
@@ -37,7 +40,7 @@ def predict_response_values_using_BNN(
              sigma = tensor_variable_representing_prior_probability_density_distribution_for_standard_deviation,
              observed = one_dimensional_array_of_response_values_for_training
         )
-        inference_data = pymc.sampling.jax.sample_numpyro_nuts(random_seed = random_seed, chain_method = 'vectorized')
+        inference_data = jax.sample_numpyro_nuts(random_seed = random_seed, chain_method = 'vectorized')
     if should_plot_trace:
         arviz.plot_trace(inference_data)
         plt.show()
