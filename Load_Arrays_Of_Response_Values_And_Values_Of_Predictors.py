@@ -6,7 +6,8 @@ python3 Load_Arrays_Of_Response_Values_And_Values_Of_Predictors.py 5000 Feature_
 import argparse
 import numpy as np
 
-number_of_training_or_testing_observations = input('Number of training or testing observations: ')
+number_of_training_or_testing_observations_as_string = input('Number of training or testing observations: ')
+number_of_training_or_testing_observations = int(number_of_training_or_testing_observations_as_string)
 path_to_dataset = input('Path to dataset: ')
 response = input('Response: ')
 print(f'number of training or testing observations: {number_of_training_or_testing_observations}')
@@ -17,12 +18,10 @@ np.random.seed(random_seed)
 feature_matrix = np.loadtxt(path_to_dataset, delimiter = ',', dtype = np.float32)
 print('Feature matrix has shape ' + str(feature_matrix.shape))
 print(feature_matrix[0:3, 0:3])
-number_of_rows = feature_matrix.shape[0]
-half_number_of_rows = number_of_rows // 2
-two_dimensional_array_of_values_of_predictors_for_training = feature_matrix[0:half_number_of_rows, 1:]
-one_dimensional_array_of_response_values_for_training = feature_matrix[0:half_number_of_rows, 0]
-two_dimensional_array_of_values_of_predictors_for_testing = feature_matrix[half_number_of_rows:, 1:]
-one_dimensional_array_of_response_values_for_testing = feature_matrix[half_number_of_rows:, 0]
+two_dimensional_array_of_values_of_predictors_for_training = feature_matrix[0:number_of_training_or_testing_observations, 1:]
+one_dimensional_array_of_response_values_for_training = feature_matrix[0:number_of_training_or_testing_observations, 0]
+two_dimensional_array_of_values_of_predictors_for_testing = feature_matrix[number_of_training_or_testing_observations:2*number_of_training_or_testing_observations, 1:]
+one_dimensional_array_of_response_values_for_testing = feature_matrix[number_of_training_or_testing_observations:2*number_of_training_or_testing_observations, 0]
 print('Two dimensional array of values of predictors for training has shape ' + str(two_dimensional_array_of_values_of_predictors_for_training.shape))
 print(two_dimensional_array_of_values_of_predictors_for_training[0:3, 0:3])
 print('One dimensional array of response values for training has shape ' + str(one_dimensional_array_of_response_values_for_training.shape))

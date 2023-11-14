@@ -21,7 +21,7 @@ def predict_response_values_using_BNN(
     init_b_2 = np.zeros(hidden_size_2)
     init_b_3 = np.array([0.0] * hidden_size_2)
     with pymc.Model() as pymc_model:
-        pdb.set_trace()
+        #pdb.set_trace()
         MutableData_of_values_of_predictors = pymc.MutableData('MutableData_of_values_of_predictors', two_dimensional_array_of_values_of_predictors_for_training)
         weights_in_1 = pymc.Normal('w_in_1', 0, sigma=1, shape=(input_size, hidden_size_1), initval=init_w_1)
         biases_1 = pymc.Normal('b_1', 0, sigma=1, shape=hidden_size_1, initval=init_b_1)
