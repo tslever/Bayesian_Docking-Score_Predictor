@@ -15,7 +15,7 @@ print(f'path to dataset: {path_to_dataset}')
 print(f'response: {response}')
 random_seed = 0
 np.random.seed(random_seed)
-feature_matrix = np.loadtxt(path_to_dataset, delimiter = ',', dtype = np.float32)
+feature_matrix = np.loadtxt(path_to_dataset, delimiter = ',', dtype = np.float32, max_rows = 2*number_of_training_or_testing_observations)
 print('Feature matrix has shape ' + str(feature_matrix.shape))
 print(feature_matrix[0:3, 0:3])
 two_dimensional_array_of_values_of_predictors_for_training = feature_matrix[0:number_of_training_or_testing_observations, 1:]
