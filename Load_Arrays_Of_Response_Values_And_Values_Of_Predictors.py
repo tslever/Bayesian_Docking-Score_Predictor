@@ -14,7 +14,7 @@ print(f'path to dataset: {path_to_dataset}')
 print(f'response: {response}')
 random_seed = 0
 np.random.seed(random_seed)
-feature_matrix = np.loadtxt(path_to_dataset, delimiter = ',', dtype = np.float16)
+feature_matrix = np.loadtxt(path_to_dataset, delimiter = ',', dtype = np.float32)
 print('Feature matrix has shape ' + str(feature_matrix.shape))
 print(feature_matrix[0:3, 0:3])
 number_of_rows = feature_matrix.shape[0]
