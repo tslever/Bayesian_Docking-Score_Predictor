@@ -41,7 +41,14 @@ def calculate_one_dimensional_array_of_residual_standard_deviations_slash_errors
     )
     return one_dimensional_array_of_standard_deviations_of_predicted_response_values
 
-def main(model, number_of_training_or_testing_observations, path_to_dataset, response, should_plot_trace):
+def main(
+    model,
+    number_of_training_or_testing_observations,
+    path_to_dataset,
+    response,
+    should_plot_marginal_posterior_distributions_for_training_data,
+    should_conduct_posterior_predictive_check
+):
     random_seed = 0
     np.random.seed(random_seed)
     feature_matrix = np.loadtxt(path_to_dataset, delimiter = ',', dtype = np.float32, max_rows = 2*number_of_training_or_testing_observations)
@@ -62,13 +69,25 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
     for i in range(0, two_dimensional_array_of_values_of_predictors_for_training.shape[1]):
         if i % 10 == 0:
             print(f'Standardizing column {i}')
-        random_sample = np.random.choice(two_dimensional_array_of_values_of_predictors_for_training[:, i], 10_000, replace = False)
+        if number_of_training_or_testing_observations > 10_000:
+            random_sample = np.random.choice(two_dimensional_array_of_values_of_predictors_for_training[:, i], 10_000, replace = False)
+        else:
+            random_sample = two_dimensional_array_of_values_of_predictors_for_training[:, i]
         two_dimensional_array_of_values_of_predictors_for_training[:, i] = (two_dimensional_array_of_values_of_predictors_for_training[:, i] - np.mean(random_sample)) / np.std(random_sample)
-        random_sample = np.random.choice(two_dimensional_array_of_values_of_predictors_for_testing[:, i], 10_000, replace = False)
+        if number_of_training_or_testing_observations > 10_000:
+            random_sample = np.random.choice(two_dimensional_array_of_values_of_predictors_for_testing[:, i], 10_000, replace = False)
+        else:
+            random_sample = two_dimensional_array_of_values_of_predictors_for_testing[:, i]
         two_dimensional_array_of_values_of_predictors_for_testing[:, i] = (two_dimensional_array_of_values_of_predictors_for_testing[:, i] - np.mean(random_sample)) / np.std(random_sample)
-    random_sample = np.random.choice(one_dimensional_array_of_response_values_for_training, 10_000, replace = False)
+    if number_of_training_or_testing_observations > 10_000:
+        random_sample = np.random.choice(one_dimensional_array_of_response_values_for_training, 10_000, replace = False)
+    else:
+        random_sample = one_dimensional_array_of_response_values_for_training
     one_dimensional_array_of_response_values_for_training = (one_dimensional_array_of_response_values_for_training - np.mean(random_sample)) / np.std(random_sample)
-    random_sample = np.random.choice(one_dimensional_array_of_response_values_for_testing, 10_000, replace = False)
+    if number_of_training_or_testing_observations > 10_000:
+        random_sample = np.random.choice(one_dimensional_array_of_response_values_for_testing, 10_000, replace = False)
+    else:
+        random_sample = one_dimensional_array_of_response_values_for_testing
     one_dimensional_array_of_response_values_for_testing = (one_dimensional_array_of_response_values_for_testing - np.mean(random_sample)) / np.std(random_sample)
     print('Two dimensional array of values of predictors for training has shape ' + str(two_dimensional_array_of_values_of_predictors_for_training.shape))
     print(two_dimensional_array_of_values_of_predictors_for_training[0:3, 0:3])
@@ -192,14 +211,51 @@ def main(model, number_of_training_or_testing_observations, path_to_dataset, res
 
                 inference_data = pmjax.sample_numpyro_nuts(random_seed = random_seed, chain_method = 'vectorized')
 
-        if should_plot_trace:
+        if should_plot_marginal_posterior_distributions_for_training_data:
             arviz.plot_trace(inference_data)
-            plt.show()
+            plt.savefig('Marginal_Posterior_Distributions_For_Training_Data.png')
+
         with pymc_model:
+            inference_data_for_posterior_predictive_probability_density_distribution_for_training_data = pymc.sample_posterior_predictive(
+                trace = inference_data,
+                random_seed = random_seed
+            )
             pymc.set_data({'MutableData_of_values_of_predictors': two_dimensional_array_of_values_of_predictors_for_testing})
-            array_of_predicted_response_values = pymc.sample_posterior_predictive(inference_data).posterior_predictive['P(response value | mu, sigma)']
+            inference_data_for_posterior_predictive_probability_density_distribution_for_testing_data = pymc.sample_posterior_predictive(
+                trace = inference_data,
+                random_seed = random_seed
+            )
+            array_of_predicted_response_values = inference_data_for_posterior_predictive_probability_density_distribution_for_testing_data.posterior_predictive['P(response value | mu, sigma)']
         one_dimensional_array_of_averages_of_predicted_response_values = array_of_predicted_response_values.mean(axis = (0, 1))
         one_dimensional_array_of_standard_deviations_of_predicted_response_values = array_of_predicted_response_values.std(axis = (0, 1))
+
+        if should_conduct_posterior_predictive_check:
+            fig, ax = plt.subplots(
+                nrows = 2,
+                ncols = 1,
+                figsize = (8, 7),
+                sharex = True,
+                sharey = True,
+                layout = 'constrained'
+            )
+            arviz.plot_ppc(
+                data = inference_data_for_posterior_predictive_probability_density_distribution_for_training_data,
+                observed_rug = True,
+                ax = ax[0]
+            )
+            ax[0].set(
+                title = 'Posterior Predictive Check For Training Data',
+            )
+            arviz.plot_ppc(
+                data = inference_data_for_posterior_predictive_probability_density_distribution_for_testing_data,
+                observed_rug = True,
+                ax = ax[1]
+            )
+            ax[1].set(
+                title = 'Posterior Predictive Check For Testing Data'
+            )
+            plt.legend(loc = 'upper right')
+            plt.savefig('Posterior_Predictive_Checks_For_Training_And_Testing_Data.png')
 
     elif (model == 'Linear_Regression_Model'):
         linear_regression_model = LinearRegression()
@@ -243,22 +299,26 @@ if __name__ == '__main__':
     parser.add_argument('number_of_training_or_testing_observations', help = 'number of training or testing observations')
     parser.add_argument('path_to_dataset', help = 'path to dataset')
     parser.add_argument('response', help = 'response')
-    parser.add_argument('--should_plot_trace', action = 'store_true', help = 'should plot trace of samples from posterior probability density distribution')
+    parser.add_argument('--should_plot_marginal_posterior_distributions_for_training_data', action = 'store_true', help = 'should plot marginal posterior probability density distributions for training data')
+    parser.add_argument('--should_conduct_posterior_predictive_check', action = 'store_true', help = 'should conduct posterior predictive checks')
     args = parser.parse_args()
     model = args.model
     number_of_training_or_testing_observations = int(args.number_of_training_or_testing_observations)
     path_to_dataset = args.path_to_dataset
     response = args.response
-    should_plot_trace = args.should_plot_trace
+    should_plot_marginal_posterior_distributions_for_training_data = args.should_plot_marginal_posterior_distributions_for_training_data
+    should_conduct_posterior_predictive_check = args.should_conduct_posterior_predictive_check
     print(f'model: {model}')
     print(f'number of training or testing observations: {number_of_training_or_testing_observations}')
     print(f'path to dataset: {path_to_dataset}')
     print(f'response: {response}')
-    print(f'should_plot_trace: {should_plot_trace}')
+    print(f'should plot marginal posterior distributions for training data: {should_plot_marginal_posterior_distributions_for_training_data}')
+    print(f'should conduct posterior predictive check: {should_conduct_posterior_predictive_check}')
     main(
         model = model,
         number_of_training_or_testing_observations = number_of_training_or_testing_observations,
         path_to_dataset = path_to_dataset,
         response = response,
-        should_plot_trace = should_plot_trace
+        should_plot_marginal_posterior_distributions_for_training_data = should_plot_marginal_posterior_distributions_for_training_data,
+        should_conduct_posterior_predictive_check = should_conduct_posterior_predictive_check
     )
