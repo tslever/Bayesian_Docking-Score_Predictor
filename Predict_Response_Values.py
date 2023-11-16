@@ -3,6 +3,15 @@ Example usage:
 python3 Predict_Response_Values.py Bayesian_Neural_Network 5000 Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv Docking_Score
 This command works on Linux but not on Windows.
 Commands with other models work on Windows.
+
+Tom Lever on 11/15/2023 was able to run
+python3 Predict_Response_Values.py Bayesian_Model_Using_BART_Model 265154 Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv Docking_Score
+on a Rivanna High-Performance computing node with 22 cores, 6 GB RAM per core possibly, or 128 GB host RAM possibly
+(Tom entered both the number of cores and the number of gigabytes of memory when setting up an interactive job).
+
+Tom Lever on 11/15/2023 was able to run
+python3 Predict_Response_Values.py Bayesian_Model_Using_BART_Model 530307 Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv Docking_Score
+on a Rivanna High-Performance computing node with 40 cores (the maximum), 6 GB RAM per core possibly, or 256 GB host RAM possibly.
 '''
 
 import argparse
