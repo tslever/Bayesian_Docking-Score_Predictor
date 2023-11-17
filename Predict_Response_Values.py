@@ -17,9 +17,11 @@ on a Rivanna High-Performance computing node with 40 cores (the maximum), 6 GB R
 import argparse
 import arviz
 from ISLP.bart.bart import BART
+import cloudpickle
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
+
 import pymc
 import pymc_bart
 import pymc.sampling.jax as pmjax
@@ -210,6 +212,12 @@ def main(
                 )
 
                 inference_data = pmjax.sample_numpyro_nuts(random_seed = random_seed, chain_method = 'vectorized')
+
+        with open(f'Pickled_{model}.mod', 'wb') as file:
+            cloudpickle.dump(pymc_model, file)
+
+        with open(f'Pickled_Training_Inference_Data_For_{model}.dat', 'wb') as file:
+            cloudpickle.dump(inference_data, file)
 
         if should_plot_marginal_posterior_distributions_for_training_data:
             arviz.plot_trace(inference_data)

@@ -1,7 +1,9 @@
+import argparse
 import arviz
 import cloudpickle
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import pymc
 
 def main(
@@ -63,9 +65,13 @@ def main(
 
     pymc_model = None
     inference_data = None
-    with open(f'Pickled_{model}.mod') as file:
+    filename_of_pickled_model = f'Pickled_{model}.mod'
+    filename_of_pickled_inference_training_data_for_model = f'Pickled_Training_Inference_Data_For_{model}.dat'
+    assert(os.path.isfile(filename_of_pickled_model))
+    assert(os.path.isfile(filename_of_pickled_inference_training_data_for_model))
+    with open(filename_of_pickled_model, 'rb') as file:
         pymc_model = cloudpickle.load(file)
-    with open(f'Pickled_Training_Inference_Data_For_{model}.dat') as file:
+    with open(filename_of_pickled_inference_data_for_model, 'rb') as file:
         inference_data = cloudpickle.load(file)
 
     if should_plot_marginal_posterior_distributions_for_training_data:
