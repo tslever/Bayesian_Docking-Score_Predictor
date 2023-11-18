@@ -12,11 +12,14 @@ import pandas as pd
 
 def main(name_of_model, number_of_training_or_testing_observations, path_to_data_frame):
     ax = None
-    for i in [1, 3, 5]:
+    for i in [2.5, 2.75, 3]:
         df = pd.read_csv(path_to_data_frame)[['observed_response_value', 'average_of_predicted_response_values']]
         data_frame_of_observed_response_values = df['observed_response_value']
-        ith_percentile_of_observed_response_values = np.percentile(data_frame_of_observed_response_values, i)
-        df['indicator_that_observed_response_value_is_in_lowest_i_percent'] = [1 if observed_response_value < ith_percentile_of_observed_response_values else 0 for observed_response_value in data_frame_of_observed_response_values]
+        the_mean = np.mean(data_frame_of_observed_response_values)
+        standard_deviation = np.std(data_frame_of_observed_response_values)
+        i_standard_deviations_below_mean = the_mean - i * standard_deviation
+        #ith_percentile_of_observed_response_values = np.percentile(data_frame_of_observed_response_values, i)
+        df['indicator_that_observed_response_value_is_in_lowest_i_percent'] = [1 if observed_response_value < i_standard_deviations_below_mean else 0 for observed_response_value in data_frame_of_observed_response_values]
         df = df.sort_values(by = 'observed_response_value')
         df['index'] = np.arange(0, len(df.index))
         df['ideal_cumulative_frequency_of_indicators_that_observed_response_value_is_in_lowest_i_percent'] = np.cumsum(df['indicator_that_observed_response_value_is_in_lowest_i_percent'])
