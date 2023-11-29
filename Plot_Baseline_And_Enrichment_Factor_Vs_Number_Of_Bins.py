@@ -1,3 +1,12 @@
+'''
+Plot_Baseline_And_Enrichment_Factor_Vs_Number_Of_Bins.py
+
+Created: 11/29/2023 by Tom Lever
+Updated: 11/29/2023 by Tom Lever
+
+Plots a Decile-wise Lift Chart
+'''
+
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
