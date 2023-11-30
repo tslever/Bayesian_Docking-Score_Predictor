@@ -278,15 +278,17 @@ def main(
     else:
         raise Exception(f'We cannot predict response values for type of model "{model}"')
 
-    data_frame_of_observed_response_values_and_averages_and_standard_deviations_of_predicted_response_values = pd.DataFrame(
+    testing_data_frame_with_averages_and_standard_deviations_of_predicted_response_values = pd.DataFrame(
         {
             'observed_response_value': one_dimensional_array_of_response_values_for_testing,
             'average_of_predicted_response_values': one_dimensional_array_of_averages_of_predicted_response_values,
             'standard_deviation_of_predicted_response_values': one_dimensional_array_of_standard_deviations_of_predicted_response_values
         }
     )
-    data_frame_of_observed_response_values_and_averages_and_standard_deviations_of_predicted_response_values.to_csv(
-        'Data_Frame_Of_Observed_Response_Values_And_Averages_And_Standard_Deviations_Of_Predicted_Response_Values.csv',
+    for i in range(0, two_dimensional_array_of_values_of_predictors_for_testing.shape[1]):
+        testing_data_frame_with_averages_and_standard_deviations_of_predicted_response_values[f'n{i}'] = two_dimensional_array_of_values_of_predictors_for_testing[:, i]
+    testing_data_frame_with_averages_and_standard_deviations_of_predicted_response_values.to_csv(
+        'Testing_Data_Frame_With_Averages_And_Standard_Deviations_Of_Predicted_Response_Values.csv',
         index = False
     )
 
