@@ -53,12 +53,15 @@ def main(
     random_seed = 0
     np.random.seed(random_seed)
     feature_matrix = np.loadtxt(path_to_dataset, delimiter = ',', dtype = np.float32, max_rows = 2*number_of_training_or_testing_observations)
+    column_of_indices = np.arange(0, feature_matrix.shape[0])
     print('Feature matrix has shape ' + str(feature_matrix.shape))
     print(feature_matrix[0:3, 0:3])
     two_dimensional_array_of_values_of_predictors_for_training = feature_matrix[0:number_of_training_or_testing_observations, 1:]
     one_dimensional_array_of_response_values_for_training = feature_matrix[0:number_of_training_or_testing_observations, 0]
+    column_of_indices_for_training = column_of_indices[0:number_of_training_or_testing_observations]
     two_dimensional_array_of_values_of_predictors_for_testing = feature_matrix[number_of_training_or_testing_observations:2*number_of_training_or_testing_observations, 1:]
     one_dimensional_array_of_response_values_for_testing = feature_matrix[number_of_training_or_testing_observations:2*number_of_training_or_testing_observations, 0]
+    column_of_indices_for_testing = column_of_indices[number_of_training_or_testing_observations:2*number_of_training_or_testing_observations]
     print('Two dimensional array of values of predictors for training has shape ' + str(two_dimensional_array_of_values_of_predictors_for_training.shape))
     print(two_dimensional_array_of_values_of_predictors_for_training[0:3, 0:3])
     print('One dimensional array of response values for training has shape ' + str(one_dimensional_array_of_response_values_for_training.shape))
@@ -278,17 +281,16 @@ def main(
     else:
         raise Exception(f'We cannot predict response values for type of model "{model}"')
 
-    testing_data_frame_with_averages_and_standard_deviations_of_predicted_response_values = pd.DataFrame(
+    data_frame_of_observed_response_values_and_averages_and_standard_deviations_of_predicted_response_values = pd.DataFrame(
         {
+            'index': column_of_indices_for_testing,
             'observed_response_value': one_dimensional_array_of_response_values_for_testing,
             'average_of_predicted_response_values': one_dimensional_array_of_averages_of_predicted_response_values,
             'standard_deviation_of_predicted_response_values': one_dimensional_array_of_standard_deviations_of_predicted_response_values
         }
     )
-    for i in range(0, two_dimensional_array_of_values_of_predictors_for_testing.shape[1]):
-        testing_data_frame_with_averages_and_standard_deviations_of_predicted_response_values[f'n{i}'] = two_dimensional_array_of_values_of_predictors_for_testing[:, i]
-    testing_data_frame_with_averages_and_standard_deviations_of_predicted_response_values.to_csv(
-        'Testing_Data_Frame_With_Averages_And_Standard_Deviations_Of_Predicted_Response_Values.csv',
+    data_frame_of_observed_response_values_and_averages_and_standard_deviations_of_predicted_response_values.to_csv(
+        'Data_Frame_Of_Observed_Response_Values_And_Averages_And_Standard_Deviations_Of_Predicted_Response_Values.csv',
         index = False
     )
 
