@@ -61,7 +61,7 @@ def generate_feature_matrix_of_docking_scores_and_numbers_of_occurrences_of_subs
         list_of_numbers_of_occurrences_of_substructures = convert_to_list_of_numbers_of_occurrences_of_substructures(molecule)
         list_of_docking_score_and_numbers_of_occurrences_of_substructures = [docking_score] + list_of_numbers_of_occurrences_of_substructures
         list_of_string_representations_of_docking_score_and_numbers_of_occurrences_of_substructures = [str(i) for i in list_of_docking_score_and_numbers_of_occurrences_of_substructures]
-        with open('Feature_Matrix_Of_Docking_Scores_And_Number_Of_Occurrences_Of_Substructures.csv', 'a') as file:
+        with open('Feature_Matrix_Of_Docking_Scores_And_Numbers_Of_Occurrences_Of_Substructures.csv', 'a') as file:
             string_of_docking_score_and_numbers_of_occurrences_of_substructures = ','.join(list_of_string_representations_of_docking_score_and_numbers_of_occurrences_of_substructures)
             file.write(string_of_docking_score_and_numbers_of_occurrences_of_substructures + '\n')
         #list_of_lists_of_docking_score_and_numbers_of_occurrences_of_substructures.append(list_of_docking_score_and_numbers_of_occurrences_of_substructures)
