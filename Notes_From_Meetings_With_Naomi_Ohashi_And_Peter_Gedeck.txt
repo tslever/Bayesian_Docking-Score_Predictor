@@ -1,3 +1,17 @@
+Friday, 11/17/2023 at 3 PM
+
+Iterative Screening improves a Gains Curve iteratively.
+Iterative Screening may be implemented as follows.
+Train and test a model on about 66,000 observations.
+For each of 2,000,000 - 66,000 testing observations, find average of predicted docking scores.
+Implementing this process using PyMC may require creating subsets of about 66,000 observations from the set of about 2,000,000 - 66,000 testing observations.
+Sort data frame of observations with averages of predicted docking scores by average.
+Choose all observations with averages below a certain threshold (e.g., mean of 66,000 observed docking scores used for training and testing - 3 * standard deviation of 66,000 observed docking scores used for training and testing).
+Alternatively, choose first 1,000 observations.
+Add chosen observations to training and testing observations.
+Train and test...
+
+
 Friday, 10/27/2023 at 3 PM
 
 
