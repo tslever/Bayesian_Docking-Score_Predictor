@@ -20,11 +20,12 @@ Linear Regression: [? - ?] / (?- ?] = ?.
 Bayesian Linear Regression: [? - ?] / (?- ?] = ?.
 Bayesian model using BART model: [? - ?] / (?- ?] = ?.
 
-An enrichment factor corresponds to a quantile (i.e., a continuous subset of values in an ordered set).
-In our case, an enrichment factor corresponds to a quantile of predicted docking scores
-(i.e., a continuous subset of predicting docking scores in the set of predicted docking scores ordered lowest to highest).
-The enrichment factor is the ratio of the proportion of observed docking scores in lowest 10 percent corresponding to a predicted docking score in the quantile
-to the proportion of predicted docking scores in the quantile.
+The below Decile-Wise Lift Chart was created based on Data Frame Of 1,060,613 Observed Docking Scores And Averages And Standard Deviations Of Docking Scores Predicted By BNN Based On Numbers Of Occurrences Of Substructures. A bin is a group of adjacent observed docking scores in the above data frame. A value of baseline or an enrichment factor are computed for each of 10 adjacent bins as
+
+  (proportion of observed docking scores in bin in lowest 10 percent)/(proportion of observed docking scores in bin)
+
+In computing a value of baseline, the rows in the above data frame are randomized. In computing an enrichment factor, the rows in the above data frame are sorted in ascending order by average predicted docking score.
+
 Bayesian model using BART model results in the highest enrichment factor but the lowest range of predicted docking scores.
 BNN results in the lowest enrichment factor but the highest range of predicted docking scores. BNN predicts docking scores less accurately than Bayesian model using BART model for mean-like observed docking scores, but predicts docking scores more accurately than Bayesian model using BART model for extreme observed docking scores.
 
