@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-data_frame_of_observed_response_values_and_averages_and_standard_deviations_of_predicted_response_values = pd.read_csv('Data_Frame_Of_530307_Observed_Response_Values_And_Averages_And_Standard_Deviations_Of_Predicted_Response_Values.csv')
+data_frame_of_observed_response_values_and_averages_and_standard_deviations_of_predicted_response_values = pd.read_csv('Data_Frame_Of_66289_Observed_Docking_Scores_And_Averages_And_Standard_Deviations_Of_Docking_Scores_Predicted_By_Bayesian_Model_Using_BART_Model_Based_On_Numbers_Of_Occurrences_Of_Substructures.csv')
 data_frame_of_observed_response_values = data_frame_of_observed_response_values_and_averages_and_standard_deviations_of_predicted_response_values['observed_response_value']
 tenth_percentile_of_observed_response_values = np.percentile(data_frame_of_observed_response_values, 10)
 list_of_indicators_that_observed_response_value_belongs_to_lowest_10_percent = [1 if observed_response_value < tenth_percentile_of_observed_response_values else 0 for observed_response_value in data_frame_of_observed_response_values]
@@ -47,6 +47,6 @@ data_frame_of_indices_of_bins_values_of_baselines_or_enrichment_factors_and_spec
     'specification of baseline or enrichment factor': ['baseline' for _ in list_of_indices_of_bins] + ['enrichment factor' for _ in list_of_indices_of_bins]
 })
 sns.barplot(x = 'index of bin', y = 'value of baseline or enrichment factor', hue = 'specification of baseline or enrichment factor', data = data_frame_of_indices_of_bins_values_of_baselines_or_enrichment_factors_and_specifications_of_baselines_or_enrichment_factors)
-plt.title('Value Of Baseline Or Enrichment Factor Vs. Index Of Bin')
+plt.title('Value Of Baseline Or Enrichment Factor Vs. Index Of Bin\nFor Bayesian Neural Network And 1,060,613 Testing Observations')
 plt.xticks(rotation = 90)
 plt.show()
