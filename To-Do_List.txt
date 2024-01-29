@@ -1,0 +1,4 @@
+Improve latent space with protein information.
+Implement a Graph Convolutional Neural Network.
+Incorporate GCNN into Transformer.
+Possibly use Bidirectional Encoder Representations for Transformers.
